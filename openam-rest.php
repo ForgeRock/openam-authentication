@@ -4,7 +4,7 @@ Plugin Name: OpenAM Authentication
 Plugin URI: http://www.forgerock.org
 Description: This plugin is used to authenticate users using OpenAM. The plugin uses REST calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/users/ and /json/sessions. Therefore you need OpenAM 11.0 and above.
 Version: 0.6
-Author: Victor.Ake@ForgeRock.Com
+Author: Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list firt)
 Author URI: http://www.forgerok.com/
 */
 
@@ -33,10 +33,10 @@ add_filter( 'login_url',      'openam_login_url',10,2 );
 // Options
 // OpenAM General configuration parameters
 add_option( 'openam_rest_enabled',                 0 );
-add_option( 'openam_cookie_name',                  'RockshopSession' );
-add_option( 'openam_base_url',                     'http://mac.openrock.org:8080/openam' );
-add_option( 'openam_realm',                        '/' );
-add_option( 'openam_authn_module',                 'DataStore' );
+add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
+add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
+add_option( 'openam_realm',                        '' );
+add_option( 'openam_authn_module',                 '' );
 add_option( 'openam_service_chain',                '' );
 add_option( 'openam_logout_too',                   0);
 add_option( 'openam_wordpress_attributes',         'uid,mail' );
@@ -66,9 +66,8 @@ define( 'MODULE_PARAM',                             'module');
 define( 'AUTH_TYPE',                                'authIndexType');
 define( 'AUTH_VALUE',                               'authIndexValue');
 define( 'DOMAIN',                                   substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')));
-define( 'DEBUG_FILE',                               '/Users/victor/logFile');
 
-
+/* Main function */
 function openam_auth($user, $username, $password) {
 
     if (OPENAM_REST_ENABLED) {
@@ -154,7 +153,6 @@ function authenticateWithOpenAM($username, $password) {
     if (empty($response->errors['http_request_failed'])) {
         if ($response['response']['code'] == 200) {
             $amResponse = json_decode($response['body'], true);
-            error_log('JSON ' . print_r($amResponse,true),3, "/Users/victor/logFile");
             $number_of_hours = 2;
             $expiration_date = time() + 60 * 60 * $number_of_hours;
             setrawcookie(OPENAM_COOKIE_NAME, $amResponse['tokenId'], $expiration_date, '/', DOMAIN);
@@ -254,7 +252,6 @@ function wp_logout() {
         }
     } 
     wp_clear_auth_cookie();
-    error_log("\nFINALlogoutURL: " . wp_logout_url() . "\n", 3, DEBUG_FILE);
     do_action('wp_logout');   
 }
 endif;

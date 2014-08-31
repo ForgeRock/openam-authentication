@@ -1,8 +1,3 @@
-openam-wordpress-plugin
-=======================
-
-Wordpress plugin to authenticate using OpenAM
-
 === Plugin Name ===
 Contributors: forgerock1
 Donate link: http://www.forgerock.org/
