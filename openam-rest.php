@@ -73,15 +73,15 @@ function openam_auth($user, $username, $password) {
     if (OPENAM_REST_ENABLED) {
         // Let's see if the user is already logged in the IDP
         $tokenId = $_COOKIE[OPENAM_COOKIE_NAME];
-        if (!empty($tokenId) AND !is_user_logged_in()) {
-            if (($_GET['action'] != 'logout') OR ($_GET['loggedout'] != 'yes')) {
-            $am_response = isSessionValid($tokenId);
-            if ($am_response['valid'] or $am_response['valid' == 'true']) { // Session was valid
-                $amAttributes = getAttributesFromOpenAM($tokenId, $am_response['uid'], OPENAM_WORDPRESS_ATTRIBUTES);
-                $user = loadUser($amAttributes['uid'][0], $amAttributes['mail'][0]);
-                remove_action('authenticate', 'wp_authenticate_username_password', 20);
-                return $user;
-            }
+        if (!empty($tokenId) AND ! is_user_logged_in()) {
+            if (($_GET['action'] != 'logout') OR ( $_GET['loggedout'] != 'yes')) {
+                $am_response = isSessionValid($tokenId);
+                if ($am_response['valid'] or $am_response['valid' == 'true']) { // Session was valid
+                    $amAttributes = getAttributesFromOpenAM($tokenId, $am_response['uid'], OPENAM_WORDPRESS_ATTRIBUTES);
+                    $user = loadUser($amAttributes['uid'][0], $amAttributes['mail'][0]);
+                    remove_action('authenticate', 'wp_authenticate_username_password', 20);
+                    return $user;
+                }
             }
         }
 
