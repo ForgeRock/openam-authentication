@@ -1,10 +1,10 @@
 === OpenAM Authentication ===
 Contributors: forgerock1
-Donate link: http://www.forgerock.org/
+Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9
 Requires at least: 3.9
 Tested up to: 3.9.2
-Stable tag: 0.6
+Stable tag: 0.9
 License: CDDLv1.0
 License URI: http://forgerock.org/projects/cddlv1-0/
 
@@ -63,3 +63,5 @@ We have implemented this plugin keeping in mind that the latest plugins are obos
 * Realm, Module, Service Chain are supported
 * Supports also redirect to OpenAM, if needed. 
 * Optional global logout configurable
+= 0.9 =
+Clean some debug statements and updated the README

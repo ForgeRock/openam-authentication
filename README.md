@@ -8,7 +8,7 @@ Wordpress plugin to authenticate using OpenAM
 <tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
 <tr><td>Tested up to:</td><td> 3.9.2</td></tr>
-<tr><td>Stable tag:</td><td> 0.6</td></tr>
+<tr><td>Stable tag:</td><td>0.9</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
 <tr><td>License URL</td><td>http://forgerock.org/projects/cddlv1-0/</td></tr>
 </table>
@@ -71,9 +71,13 @@ Why did you write this plug-in?
 0.5
 <dd>Initial drop
 <dt>
-0.6
+0.9
 <dd>A more advanced version than the initial drop. 
 <dd>Realm, Module, Service Chain are supported
 <dd>Supports also redirect to OpenAM, if needed. 
 <dd>Optional global logout configurable
+<dt>
+0.9
+<dd>
+Clean some debug statements and updated the README.md
 </dl>
