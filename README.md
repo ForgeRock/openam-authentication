@@ -71,7 +71,7 @@ Why did you write this plug-in?
 0.5
 <dd>Initial drop
 <dt>
-0.9
+0.6
 <dd>A more advanced version than the initial drop. 
 <dd>Realm, Module, Service Chain are supported
 <dd>Supports also redirect to OpenAM, if needed. 
