@@ -4,7 +4,7 @@ Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9
 Requires at least: 3.9
 Tested up to: 3.9.2
-Stable tag: 0.9
+Stable tag: 1.0
 License: CDDLv1.0
 License URI: http://forgerock.org/projects/cddlv1-0/
 
