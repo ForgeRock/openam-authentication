@@ -302,7 +302,7 @@ function openam_login_url($login_url, $redirect = null) {
  * Function used to add the options menu in the wordpress console
  */
 function openam_rest_plugin_menu() {
-  add_options_page('OpenAM-REST Plugin Options', 'OpenAM-REST Plugin', 8, 'openam', 'openam_rest_plugin_options');
+  add_options_page('OpenAM-REST Plugin Options', 'OpenAM-REST Plugin', 'manage_options', 'openam', 'openam_rest_plugin_options');
 }
 
 /*
