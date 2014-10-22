@@ -66,7 +66,7 @@ We have implemented this plugin keeping in mind that the latest plugins are obos
 = 0.9 =
 Clean some debug statements and updated the README
 = 1.0 =
-First release in WordPress plugins
+First release in Wordpress plugins
 
 = 1.0.1 =
 Updated user access to use roles and not levels

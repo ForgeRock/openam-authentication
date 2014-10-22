@@ -81,7 +81,6 @@ Why did you write this plug-in?
 0.9
 <dd>
 Clean some debug statements and updated the README.md
-</dl>
 <dt>
 1.0
 <dd>First release in Wordpress plugins
@@ -92,3 +91,4 @@ Updated user access to use roles and not levels
 1.1
 <dd>Introduced the Legacy REST API mode to support OpenAM versions older than 11.0
 <dd>An option to enable debugging and specify the name of the debug file was introduced
+</dl>
