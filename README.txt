@@ -17,7 +17,7 @@ Integrate Wordpress Authentication with OpenAM. Authenticates directly from the 
 
 == Contributing ==
 The easiest way to contribute to this plugin is to submit a GitHub pull request. Here's the repo:
-https://github.com/forgerock1/openam-wordpress-plugin
+https://github.com/forgerock1/openam-authentication
 
 
 == Installation ==
@@ -65,3 +65,11 @@ We have implemented this plugin keeping in mind that the latest plugins are obos
 * Optional global logout configurable
 = 0.9 =
 Clean some debug statements and updated the README
+= 1.0 =
+First release in WordPress plugins
+
+= 1.0.1 =
+Updated user access to use roles and not levels
+= 1.1 =
+Introduced the Legacy REST API mode to support OpenAM versions older than 11.0
+An option to enable debugging and specify the name of the debug file was introduced

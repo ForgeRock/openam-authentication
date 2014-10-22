@@ -38,8 +38,9 @@ https://github.com/forgerock1/openam-authentication
 What is it needed to make this plug-in work
 <dd>
 <ol>
-<li>An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain APIs, hence OpenAM 11.0 and above is required.
-<li>Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2, but it might work with previous versions.
+<li>An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain APIs, hence OpenAM 10.X and above is required.
+<li> For versions of OpenAM 11.0 and older, the Legacy API mode will need to be enabled in the plugin
+<li>Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2 and 4.0.0 but it might work with previous versions.
 </ol>
 <dt>
 Do I need an OpenAM Policy Agent?
@@ -81,3 +82,13 @@ Why did you write this plug-in?
 <dd>
 Clean some debug statements and updated the README.md
 </dl>
+<dt>
+1.0
+<dd>First release in Wordpress plugins
+<dt>1.0.1
+<dd>
+Updated user access to use roles and not levels
+<dt>
+1.1
+<dd>Introduced the Legacy REST API mode to support OpenAM versions older than 11.0
+<dd>An option to enable debugging and specify the name of the debug file was introduced

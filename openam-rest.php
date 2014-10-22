@@ -33,6 +33,7 @@ add_filter( 'login_url',      'openam_login_url',10,2 );
 // Options
 // OpenAM General configuration parameters
 add_option( 'openam_rest_enabled',                 0 );
+add_option( 'openam_legacy_apis_enabled',          0 );
 add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
 add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
 add_option( 'openam_realm',                        '' );
@@ -40,11 +41,14 @@ add_option( 'openam_authn_module',                 '' );
 add_option( 'openam_service_chain',                '' );
 add_option( 'openam_logout_too',                   0);
 add_option( 'openam_wordpress_attributes',         'uid,mail' );
-add_option( 'openam_do_redirect',                   0);
+add_option( 'openam_do_redirect',                  0);
+add_option( 'openam_debug_enabled',                0);
+add_option( 'openam_debug_file',                   '/Users/victor/logFile');
 
 // Constants
 // OpenAM General Configuration parameters
 define( 'OPENAM_REST_ENABLED',                      get_option( 'openam_rest_enabled' ) );
+define( 'OPENAM_LEGACY_APIS_ENABLED',               get_option( 'openam_legacy_apis_enabled' ) );
 define( 'OPENAM_COOKIE_NAME',                       get_option( 'openam_cookie_name' ) );
 define( 'OPENAM_BASE_URL',                          get_option( 'openam_base_url' ) );
 define( 'OPENAM_REALM',                             get_option( 'openam_realm' ) );
@@ -53,11 +57,19 @@ define( 'OPENAM_SERVICE_CHAIN',                     get_option( 'openam_service_
 define( 'OPENAM_WORDPRESS_ATTRIBUTES',              get_option( 'openam_wordpress_attributes' ) );
 define( 'OPENAM_LOGOUT_TOO',                        get_option( 'openam_logout_too' ) );
 define( 'OPENAM_DO_REDIRECT',                       get_option( 'openam_do_redirect' ) );
+define( 'OPENAM_DEBUG_ENABLED',                     get_option( 'openam_debug_enabled' ) );
+define( 'OPENAM_DEBUG_FILE',                        get_option( 'openam_debug_file' ) );
 
 // OpenAM API endpoints
 define( 'OPENAM_AUTHN_URI',                         '/json/authenticate' );
 define( 'OPENAM_ATTRIBUTES_URI',                    '/json/users/' );
 define( 'OPENAM_SESSION_URI',                       '/json/sessions/' );
+
+// Legacy
+define( 'OPENAM_LEGACY_AUTHN_URI',                  '/identity/json/authenticate' );
+define( 'OPENAM_LEGACY_ATTRIBUTES_URI',             '/identity/json/attributes' );
+define( 'OPENAM_LEGACY_SESSION_VALIDATION',         '/identity/json/isTokenValid' );
+define( 'OPENAM_LEGACY_SESSION_LOGOUT',             '/identity/logout' );
 
 // Other constants
 define( 'REALM_PARAM',                              'realm');
@@ -74,10 +86,15 @@ function openam_auth($user, $username, $password) {
         // Let's see if the user is already logged in the IDP
         $tokenId = $_COOKIE[OPENAM_COOKIE_NAME];
         if (!empty($tokenId) AND ! is_user_logged_in()) {
+            openam_debug("openam_auth: TOKENID:" . $tokenId);
             if (($_GET['action'] != 'logout') OR ( $_GET['loggedout'] != 'yes')) {
                 $am_response = isSessionValid($tokenId);
-                if ($am_response['valid'] or $am_response['valid' == 'true']) { // Session was valid
+                if ($am_response['valid'] or $am_response['valid' == 'true'] or 
+                        $am_response['boolean'] == '1') { // Session was valid
+                    openam_debug("openam_auth: Authentication was succesful");
                     $amAttributes = getAttributesFromOpenAM($tokenId, $am_response['uid'], OPENAM_WORDPRESS_ATTRIBUTES);
+                    openam_debug("openam_auth: UID: " . print_r($amAttributes['uid'][0], TRUE));
+                    openam_debug("openam_auth: MAIL: " . print_r($amAttributes['mail'][0], TRUE));
                     $user = loadUser($amAttributes['uid'][0], $amAttributes['mail'][0]);
                     remove_action('authenticate', 'wp_authenticate_username_password', 20);
                     return $user;
@@ -87,7 +104,6 @@ function openam_auth($user, $username, $password) {
 
         // If no username nor password, then we are starting here
         if ($username != '' and $password != '') {
-
             $tokenId = authenticateWithOpenAM($username, $password);
             if (!$tokenId) {
                 // User does not exist,  send back an error message
@@ -109,15 +125,28 @@ function openam_auth($user, $username, $password) {
 
 /* Verifies that the OpenAM session is valid */
 function isSessionValid($tokenId) {
-     $sessions_url=OPENAM_BASE_URL . OPENAM_SESSION_URI;
-     $headers = array( 'Content-Type' => 'application/json' );
-     $response = wp_remote_post( $sessions_url . $tokenId . "?_action=validate", 
-     array( 'headers' => $headers , 
-            'sslverify' => false ,
-          ) );        
-     $amResponse = json_decode( $response['body'], true );
-     return $amResponse;
+    if (!OPENAM_LEGACY_APIS_ENABLED) {
+        openam_debug("isSessionValid: Legacy Mode Disabled");
+        $sessions_url = OPENAM_BASE_URL . OPENAM_SESSION_URI;
+        $headers = array('Content-Type' => 'application/json');
+        $response = wp_remote_post($sessions_url . $tokenId . "?_action=validate", array('headers' => $headers,
+            'sslverify' => false,
+                ));
+        $amResponse = json_decode($response['body'], true);      
+        return $amResponse;
+    } else {
+        openam_debug("isSessionValid: Legacy Mode Enabled");
+        $sessions_url = OPENAM_BASE_URL . OPENAM_LEGACY_SESSION_VALIDATION;
+        $response = wp_remote_post($sessions_url . "?tokenid=" . $tokenId, array(
+            'sslverify' => false,
+                ));
+        openam_debug("isSessionValid: isValid Response: " . print_r($response, TRUE));
+        $amResponse = json_decode($response['body'], true);
+        return $amResponse;
+        
+    }
 }
+
 
 /* Loads a user if found, if not it creates it in the local database using the 
  * attributes pulled from OpenaM
@@ -125,6 +154,7 @@ function isSessionValid($tokenId) {
 function loadUser($login,$mail) {
         $userobj = new WP_User();
         $user = $userobj->get_data_by( 'login', $login );
+        openam_debug("loadUser: user object: " . print_r($user, TRUE));
         $user = new WP_User($user->ID); // Attempt to load up the user with that ID
          
         if( $user->ID == 0 ) { // User did not exist
@@ -135,21 +165,31 @@ function loadUser($login,$mail) {
              // Load the new user info
              $user = new WP_User ($new_user_id);
         } 
+        openam_debug("loadUser: WP_User loaded: " . print_r($user, TRUE));
         return $user;
 }
 
 /* Authenticates a user in OpenAM using the credentials passed  */
 function authenticateWithOpenAM($username, $password) {
+    if (!OPENAM_LEGACY_APIS_ENABLED) {
+        return authenticateWithModernOpenAM($username, $password);      
+    } else {
+        return authenticateWithLegacyOpenAM($username, $password);
+    }
+}
 
-    // $authentication_url = OPENAM_BASE_URL . OPENAM_AUTHN_URI;
+/* Authenticates a user in a modern OpenAM using the credentials passed  */
+function authenticateWithModernOpenAM($username, $password) {
     $authentication_url = createAuthenticationURL();
+    openam_debug("authenticateWithModernOpenAM: AUTHN URL: " . $authentication_url);
     $headers = array('X-OpenAM-Username' => $username,
         'X-OpenAM-Password' => $password,
         'Content-Type' => 'application/json');
     $response = wp_remote_post($authentication_url, array('headers' => $headers,
         'body' => '{}',
-        'sslverify' => false,
+        'sslverify' => false
             ));
+    openam_debug("authenticateWithModernOpenAM: RAW AUTHN RESPONSE: " . print_r($response, TRUE));
     if (empty($response->errors['http_request_failed'])) {
         if ($response['response']['code'] == 200) {
             $amResponse = json_decode($response['body'], true);
@@ -157,12 +197,40 @@ function authenticateWithOpenAM($username, $password) {
             $expiration_date = time() + 60 * 60 * $number_of_hours;
             setrawcookie(OPENAM_COOKIE_NAME, $amResponse['tokenId'], $expiration_date, '/', DOMAIN);
             return $amResponse['tokenId'];
+            openam_debug("authenticateWithModernOpenAM:: AUTHN Response: " . print_r($amResponse,TRUE));
         }
         return 0;
     }
     else
         return 2;
 }
+
+/* Authenticates a user with a legacy OpenAM using the credentials passed  */
+function authenticateWithLegacyOpenAM($username, $password) {
+    $authentication_url = OPENAM_BASE_URL . OPENAM_LEGACY_AUTHN_URI;
+    openam_debug("authenticateWithLegacyOpenAM: AUTHN URL: " . $authentication_url);
+    $uri_param = createLegacyAuthenticationURIParams();
+    $uri = "?username=" . $username . "&password=" . $password . 
+            $uri_param;
+    $response = wp_remote_post($authentication_url . $uri, array('headers' => $headers,
+        'sslverify' => false,
+            ));
+    openam_debug("authenticateWithLegacyOpenAM: RAW AUTHN RESPONSE: " . print_r($response, TRUE));
+    if (empty($response->errors['http_request_failed'])) {
+        if ($response['response']['code'] == 200) {
+            $amResponse = json_decode($response['body'], true);
+            $number_of_hours = 2;
+            $expiration_date = time() + 60 * 60 * $number_of_hours;
+            setrawcookie(OPENAM_COOKIE_NAME, $amResponse['tokenId'], $expiration_date, '/', DOMAIN);
+            openam_debug("authenticateWithLegacyOpenAM: AUTHN RESPONSE: " . print_r($amResponse, TRUE));
+            return $amResponse['tokenId'];
+        }
+        return 0;
+    }
+    else
+        return 2;
+}
+
 
 /* Creates the proper OpenAM authentication URL using the parameters configured */
 function createAuthenticationURL() {
@@ -193,18 +261,67 @@ function createAuthenticationURL() {
     return $authentication_url;
 }
 
+/* Creates the proper OpenAM authentication URL using the parameters configured */
+function createLegacyAuthenticationURIParams() {
+
+    $authentication_url = OPENAM_BASE_URL . OPENAM_LEGACY_AUTHN_URI;
+    $uri = '';
+    if (OPENAM_REALM != '') {
+        $uri = REALM_PARAM . "=" . OPENAM_REALM;
+    }
+    if (OPENAM_AUTHN_MODULE != '') {
+        if ($uri != '') {
+            $uri .= "&" . MODULE_PARAM . "=" . OPENAM_AUTHN_MODULE;
+        } else {
+            $uri = MODULE_PARAM . "=" . OPENAM_AUTHN_MODULE;
+        }
+    } else {
+        if (OPENAM_SERVICE_CHAIN != '') {
+            if ($uri != '') {
+                $uri .= "&" . SERVICE_PARAM . "=" . OPENAM_SERVICE_CHAIN;
+            } else {
+                $uri = SERVICE_PARAM . "=" . OPENAM_SERVICE_CHAIN;
+            }
+        }
+    }
+    $uri_param = '';
+    if ($uri != '') {
+        $uri_param = "&uri=" . urlencode($uri);
+    }
+    return $uri_param;
+}
+
+
 /* Pulls attributes from OpenAM using the existing session and username */
 function getAttributesFromOpenAM($tokenId, $username, $attributes) {
+    if (!OPENAM_LEGACY_APIS_ENABLED) {
+        openam_debug("getAttributesFromOpenAM: LEGACY NOT ENABLED");
+        return getAttributesFromModernOpenAM($tokenId, $username, $attributes);      
+    } else {
+        openam_debug("getAttributesFromOpenAM: LEGACY ENABLED");
+        return getAttributesFromLegacyOpenAM($tokenId, $attributes);
+    }
+}
+
+
+/* Pulls attributes from OpenAM using the existing session and username */
+function getAttributesFromModernOpenAM($tokenId, $username, $attributes) {
     $attributes_url=createAttributesURL();
+    openam_debug("getAttributesFromModernOpenAM: ATTRIBUTE URL: " . $attributes_url);
     $headers = array( OPENAM_COOKIE_NAME => $tokenId ,
                     'Content-Type' => 'application/json' );
     $url = $attributes_url . $username . "?_fields=" . $attributes;
+    openam_debug("getAttributesFromModernOpenAM: full url: " . $url);
     $response = wp_remote_get( $url, 
     array( 'headers' => $headers , 
-            'sslverify' => false ,
+            'sslverify' => false 
          ) );
+    openam_debug("getAttributesFromModernOpenAM: RAW ATTR RESPONSE: " . 
+            print_r($response, TRUE));
     $amResponse = json_decode( $response['body'], true );
-    if ($response['response']['code'] == 200 ) 
+    openam_debug("getAttributesFromModernOpenAM: ATTRIBUTE RESP: " . 
+            print_r($amResponse, TRUE));
+    if ($response['response']['code'] == 200 )
         return $amResponse;
     else return 0;
 
@@ -220,6 +337,46 @@ function createAttributesURL() {
     return $attributes_url;
 }
 
+/* Pulls attributes from OpenAM using the existing session and username */
+function getAttributesFromLegacyOpenAM($tokenId, $attributes) {
+    $attributes_url=createAttributesLegacyURL($tokenId);
+    openam_debug("getAttributesFromLegacyOpenAM: Attributes URL: " . $attributes_url);
+    $response = wp_remote_get( $attributes_url, 
+    array( 'sslverify' => false
+         ) );
+    openam_debug("getAttributesFromLegacyOpenAM: RAW ATTRS RESPONSE: " . 
+            print_r($response, TRUE));
+    $amResponse = json_decode( $response['body'], true );
+    openam_debug("getAttributesFromLegacyOpenAM: ATTRIBUTES RESPONSE: " . 
+            print_r($amResponse, TRUE));
+    if ($response['response']['code'] == 200 ) {
+        $attr1 = $amResponse['attributes'];
+        foreach ($attr1 as $json_attr){
+           $attr_name = $json_attr['name'];
+           $attr_value = $json_attr['values'];
+           $amResponse2[$attr_name] = $attr_value;
+        }   
+        openam_debug("getAttributesFromLegacyOpenAM: Attributes: " . 
+                print_r($amResponse2, TRUE));
+        return $amResponse2;
+    } else return 0;
+
+}
+
+/* Creates the proper OpenAM Attributes URL using the configured parameters */
+function createAttributesLegacyURL($tokenId) {
+
+    $attributes_url = OPENAM_BASE_URL . OPENAM_LEGACY_ATTRIBUTES_URI . 
+            "?subjectid=" . $tokenId;
+    if (OPENAM_WORDPRESS_ATTRIBUTES != '') {
+        $attributes = explode(',', OPENAM_WORDPRESS_ATTRIBUTES);
+        foreach ($attributes as $attributename) {
+            $attribute_uri .= "&attributenames=" . $attributename;
+        }
+        $attributes_url .= $attribute_uri;
+    }
+    return $attributes_url;
+}
 
 
 /* Returns a modified logout url, where the user is redirected back to the
@@ -247,6 +404,8 @@ function wp_logout() {
             $response = wp_remote_post($url, array('headers' => $headers,
                 'sslverify' => false,
                     ));
+            openam_debug("wp_logout: RAW RESPONSE LOGOUT: " . 
+                    print_r($response, TRUE));
             $expiration_date = time() - 60 ;
             setcookie(OPENAM_COOKIE_NAME, '', $expiration_date, '/', DOMAIN);
         }
@@ -282,7 +441,7 @@ function createOpenAMLoginURL() {
 }
 
 function openam_login_url($login_url, $redirect = null) {
-    if (OPENAM_DO_REDIRECT) {
+    if (OPENAM_DO_REDIRECT) {        
         $new_url = createOpenAMLoginURL();
         if (!stripos($new_url, '?')) {
             $new_url .= "?" . "goto=" . urlencode($login_url);
@@ -294,6 +453,16 @@ function openam_login_url($login_url, $redirect = null) {
         return $login_url;
     }
 }
+
+/* Writes to the debug file if debugging has been enabled 
+ * 
+ */
+function openam_debug($message) {
+    if (OPENAM_DEBUG_ENABLED) {
+        error_log($message . "\n", 3, OPENAM_DEBUG_FILE);
+    }
+}
+
 
 // Functions from here and down are used for the administration of the plugin
 // in the wordpress admin panel
@@ -324,7 +493,14 @@ function openam_rest_plugin_options() {
 <td> <fieldset><legend class="screen-reader-text"><span><?php _e('OpenAM REST enabled') ?></span></legend><label for="openam_rest_enabled">
 <input name="openam_rest_enabled" type="checkbox" id="openam_rest_enabled" value="1" <?php checked('1', get_option('openam_rest_enabled')); ?> />
 <?php _e('This checkbox enables or disables this plugin') ?></label>
-</fieldset></td>
+</fieldset></td></tr>
+
+<tr valign="top">
+<th scope="row"><?php _e('OpenAM-Legacy enabled') ?></th>
+<td> <fieldset><legend class="screen-reader-text"><span><?php _e('OpenAM Legacy enabled') ?></span></legend><label for="openam_legacy_apis_enabled">
+<input name="openam_legacy_apis_enabled" type="checkbox" id="openam_legacy_apis_enabled" value="1" <?php checked('1', get_option('openam_legacy_apis_enabled')); ?> />
+<?php _e('This checkbox enables or disables the use of legacy REST APIs (For OpenAM 11.0 and older)') ?></label>
+</fieldset></td></tr>
 
 <tr valign="top">
 <th scope="row"><label for="openam_cookie_name"><?php _e('OpenAM Session cookie') ?></label></th>
@@ -339,7 +515,7 @@ function openam_rest_plugin_options() {
 <th scope="row"><label for="openam_base_url"><?php _e('OpenAM base URL') ?></label></th>
 <td><input type="text" name="openam_base_url" value="<?php echo get_option('openam_base_url'); ?>" class="regular-text code" />
     <span class="description">
-               <?php _e('The OpenAM deployment URL. Example: <code>http://openam.example.com:80/openam/</code>') ?>
+               <?php _e('The OpenAM deployment URL. Example: <code>http://openam.example.com:80/openam</code>') ?>
     </span>
 </td>
 </tr>
@@ -401,15 +577,36 @@ function openam_rest_plugin_options() {
     <fieldset><legend class="screen-reader-text"><span>
         <?php _e('Redirect to OpenAM for Login') ?>
             </span></legend><label for="openam_do_redirect">
-<input name="openam_do_redirect" type="checkbox" id="openam_logout_too" value="1" <?php checked('1', get_option('openam_do_redirect')); ?> />
+<input name="openam_do_redirect" type="checkbox" id="openam_do_redirect" value="1" <?php checked('1', get_option('openam_do_redirect')); ?> />
 <?php _e('For authentication chains and modules with a more complex workflow than user/password, redirect to OpenAM') ?></label>
+</fieldset></td></tr>
+
+<tr valign="top">
+<th scope="row"><?php _e('Enable debug') ?></th>
+<td>
+    <fieldset><legend class="screen-reader-text"><span>
+        <?php _e('Enable debug') ?>
+            </span></legend><label for="openam_debug_enabled">
+<input name="openam_debug_enabled" type="checkbox" id="openam_debug_enabled" value="1" <?php checked('1', get_option('openam_debug_enabled')); ?> />
+<?php _e('Enables debug in the module. If enabled, the debug file must be specified. Remember to turn-off in production environment') ?></label>
 </fieldset></td>
+</tr>
+
+<tr valign="top">
+<th scope="row"><label for="openam_debug_file"><?php _e('Name of the debug file') ?></label></th>
+<td><input type="text" name="openam_debug_file" value="<?php echo get_option('openam_debug_file'); ?>" class="regular-text code" />
+    <span class="description">
+        <?php _e('Name of the debug file') ?>
+    </span>
+</td>
+</tr>
 
 </table>
 
 <input type="hidden" name="action" value="update" />
-<input type="hidden" name="page_options" value="openam_rest_enabled,openam_cookie_name,openam_base_url,
-       openam_realm,openam_authn_module,openam_service_chain,openam_logout_too,openam_do_redirect,openam_wordpress_attributes" />
+<input type="hidden" name="page_options" value="openam_rest_enabled,openam_legacy_apis_enabled,openam_cookie_name,openam_base_url,
+       openam_realm,openam_authn_module,openam_service_chain,openam_logout_too,openam_do_redirect,openam_wordpress_attributes,
+       openam_debug_enabled, openam_debug_file" />
 
 <p class="submit">
 <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
