@@ -3,8 +3,8 @@ Contributors: forgerock1
 Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9
 Requires at least: 3.9
-Tested up to: 3.9.2
-Stable tag: 1.1
+Tested up to: 4.0.0
+Stable tag: 1.1.1
 License: CDDLv1.0
 License URI: http://forgerock.org/projects/cddlv1-0/
 
@@ -28,8 +28,8 @@ https://github.com/forgerock1/openam-authentication
 
 == Frequently Asked Questions ==
 = What is it needed to make this plug-in work =
-1. An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain APIs, hence OpenAM 11.0 and above is required.
-2. Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2, but it might work with previous versions.
+1. An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain REST APIs, hence OpenAM 10.x and above is required.
+2. Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2 and 4.0.0, but it might work with previous versions.
 
 = Do I need an OpenAM Policy Agent? =
 No, a Policy Agent is not needed

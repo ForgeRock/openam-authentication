@@ -7,8 +7,8 @@ Wordpress plugin to authenticate using OpenAM
 <tr><td>Link:</td><td> http://www.forgerock.org/</td></tr>
 <tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
-<tr><td>Tested up to:</td><td> 3.9.2</td></tr>
-<tr><td>Stable tag:</td><td>1.1</td></tr>
+<tr><td>Tested up to:</td><td>4.0.0</td></tr>
+<tr><td>Stable tag:</td><td>1.1.1</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
 <tr><td>License URL</td><td>http://forgerock.org/projects/cddlv1-0/</td></tr>
 </table>
@@ -38,7 +38,7 @@ https://github.com/forgerock1/openam-authentication
 What is it needed to make this plug-in work
 <dd>
 <ol>
-<li>An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain APIs, hence OpenAM 10.X and above is required.
+<li>An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain REST APIs, hence OpenAM 10.X and above is required.
 <li> For versions of OpenAM 11.0 and older, the Legacy API mode will need to be enabled in the plugin
 <li>Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2 and 4.0.0 but it might work with previous versions.
 </ol>
