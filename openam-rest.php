@@ -55,6 +55,9 @@ define( 'OPENAM_REALM',                             get_option( 'openam_realm' )
 define( 'OPENAM_AUTHN_MODULE',                      get_option( 'openam_authn_module' ) );
 define( 'OPENAM_SERVICE_CHAIN',                     get_option( 'openam_service_chain' ) );
 define( 'OPENAM_WORDPRESS_ATTRIBUTES',              get_option( 'openam_wordpress_attributes' ) );
+$OPENAM_WORDPRESS_ATTRIBUTES_ARRAY =  explode(',', OPENAM_WORDPRESS_ATTRIBUTES);
+define( 'OPENAM_WORDPRESS_ATTRIBUTES_USERNAME',     $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[0] );
+define( 'OPENAM_WORDPRESS_ATTRIBUTES_MAIL',         $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[1] );
 define( 'OPENAM_LOGOUT_TOO',                        get_option( 'openam_logout_too' ) );
 define( 'OPENAM_DO_REDIRECT',                       get_option( 'openam_do_redirect' ) );
 define( 'OPENAM_DEBUG_ENABLED',                     get_option( 'openam_debug_enabled' ) );
@@ -92,10 +95,10 @@ function openam_auth($user, $username, $password) {
                 if ($am_response['valid'] or $am_response['valid' == 'true'] or 
                         $am_response['boolean'] == '1') { // Session was valid
                     openam_debug("openam_auth: Authentication was succesful");
-                    $amAttributes = getAttributesFromOpenAM($tokenId, $am_response['uid'], OPENAM_WORDPRESS_ATTRIBUTES);
-                    openam_debug("openam_auth: UID: " . print_r($amAttributes['uid'][0], TRUE));
-                    openam_debug("openam_auth: MAIL: " . print_r($amAttributes['mail'][0], TRUE));
-                    $user = loadUser($amAttributes['uid'][0], $amAttributes['mail'][0]);
+                    $amAttributes = getAttributesFromOpenAM($tokenId, $am_response[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME], OPENAM_WORDPRESS_ATTRIBUTES);
+                    openam_debug("openam_auth: UID: " . print_r($amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME], TRUE));
+                    openam_debug("openam_auth: MAIL: " . print_r($amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_MAIL][0], TRUE));
+                    $user = loadUser($amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME], $amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_MAIL][0]);
                     remove_action('authenticate', 'wp_authenticate_username_password', 20);
                     return $user;
                 }
@@ -113,7 +116,9 @@ function openam_auth($user, $username, $password) {
             } else {
                 $amAttributes = getAttributesFromOpenAM($tokenId, $username, OPENAM_WORDPRESS_ATTRIBUTES);
                 if ($amAttributes) {
-                    $user = loadUser($amAttributes['uid'][0], $amAttributes['mail'][0]);
+			        openam_debug("openam_auth: UID: " . print_r($amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME], TRUE));
+                    openam_debug("openam_auth: MAIL: " . print_r($amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_MAIL][0], TRUE));
+                    $user = loadUser($amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME], $amAttributes[OPENAM_WORDPRESS_ATTRIBUTES_MAIL][0]);
                     remove_action('authenticate', 'wp_authenticate_username_password', 20);
                     return $user;
                 }
