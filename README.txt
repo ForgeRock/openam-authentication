@@ -3,8 +3,8 @@ Contributors: forgerock1
 Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9
 Requires at least: 3.9
-Tested up to: 4.0.0
-Stable tag: 1.1.1
+Tested up to: 4.1.0
+Stable tag: 1.2
 License: CDDLv1.0
 License URI: http://forgerock.org/projects/cddlv1-0/
 
@@ -17,7 +17,7 @@ Integrate Wordpress Authentication with OpenAM. Authenticates directly from the 
 
 == Contributing ==
 The easiest way to contribute to this plugin is to submit a GitHub pull request. Here's the repo:
-https://github.com/forgerock1/openam-authentication
+https://github.com/forgerock/openam-authentication
 
 
 == Installation ==
@@ -73,3 +73,7 @@ Updated user access to use roles and not levels
 = 1.1 =
 Introduced the Legacy REST API mode to support OpenAM versions older than 11.0
 An option to enable debugging and specify the name of the debug file was introduced
+= 1.2 =
+Added an option to specify the domain where the SSO cookie will be set.
+The uid and email address attribute name were hardcoded, now they are properly done.
+Change a little bit the Options (Settings) page

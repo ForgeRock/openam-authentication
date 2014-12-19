@@ -3,7 +3,7 @@
 Plugin Name: OpenAM Authentication
 Plugin URI: http://www.forgerock.org
 Description: This plugin is used to authenticate users using OpenAM. The plugin uses REST calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/users/ and /json/sessions. Therefore you need OpenAM 11.0 and above.
-Version: 1.1
+Version: 1.2
 Author: Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list firt)
 Author URI: http://www.forgerock.com/
 */
@@ -35,6 +35,7 @@ add_filter( 'login_url',      'openam_login_url',10,2 );
 add_option( 'openam_rest_enabled',                 0 );
 add_option( 'openam_legacy_apis_enabled',          0 );
 add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
+add_option( 'openam_cookie_domain',                substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')) );
 add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
 add_option( 'openam_realm',                        '' );
 add_option( 'openam_authn_module',                 '' );
@@ -50,6 +51,7 @@ add_option( 'openam_debug_file',                   '/Users/victor/logFile');
 define( 'OPENAM_REST_ENABLED',                      get_option( 'openam_rest_enabled' ) );
 define( 'OPENAM_LEGACY_APIS_ENABLED',               get_option( 'openam_legacy_apis_enabled' ) );
 define( 'OPENAM_COOKIE_NAME',                       get_option( 'openam_cookie_name' ) );
+define( 'DOMAIN',                                   get_option( 'openam_cookie_domain'));
 define( 'OPENAM_BASE_URL',                          get_option( 'openam_base_url' ) );
 define( 'OPENAM_REALM',                             get_option( 'openam_realm' ) );
 define( 'OPENAM_AUTHN_MODULE',                      get_option( 'openam_authn_module' ) );
@@ -510,124 +512,137 @@ function openam_rest_plugin_options() {
 
 <table class="form-table">
 
-<tr valign="top">
-<th scope="row"><?php _e('OpenAM-REST enabled') ?></th>
-<td> <fieldset><legend class="screen-reader-text"><span><?php _e('OpenAM REST enabled') ?></span></legend><label for="openam_rest_enabled">
+<tr valign="middle">
+<td><?php _e('OpenAM-REST enabled') ?></td>
+<td> <fieldset><legend class="screen-reader-text"><?php _e('OpenAM REST enabled') ?></legend><label for="openam_rest_enabled">
 <input name="openam_rest_enabled" type="checkbox" id="openam_rest_enabled" value="1" <?php checked('1', get_option('openam_rest_enabled')); ?> />
-<?php _e('This checkbox enables or disables this plugin') ?></label>
-</fieldset></td></tr>
+</td><td ><span class="description"><?php _e('Enable or disable this plugin') ?></label>
+        </span></fieldset></td></tr>
 
-<tr valign="top">
-<th scope="row"><?php _e('OpenAM-Legacy enabled') ?></th>
-<td> <fieldset><legend class="screen-reader-text"><span><?php _e('OpenAM Legacy enabled') ?></span></legend><label for="openam_legacy_apis_enabled">
+<tr valign="middle">
+<td><?php _e('OpenAM-Legacy enabled') ?></td>
+<td> <fieldset><legend class="screen-reader-text"><?php _e('OpenAM Legacy enabled') ?></legend><label for="openam_legacy_apis_enabled">
 <input name="openam_legacy_apis_enabled" type="checkbox" id="openam_legacy_apis_enabled" value="1" <?php checked('1', get_option('openam_legacy_apis_enabled')); ?> />
-<?php _e('This checkbox enables or disables the use of legacy REST APIs (For OpenAM 11.0 and older)') ?></label>
-</fieldset></td></tr>
+</td><td><span class="description"><?php _e('Enable or disable the use of legacy REST APIs (For OpenAM 11.0 and older)') ?></label>
+        </span></fieldset></td></tr>
 
-<tr valign="top">
-<th scope="row"><label for="openam_cookie_name"><?php _e('OpenAM Session cookie') ?></label></th>
+<tr valign="middle">
+<td><label for="openam_cookie_name"><?php _e('OpenAM Session cookie') ?></label></td>
 <td><input type="text" name="openam_cookie_name" value="<?php echo get_option('openam_cookie_name'); ?>" class="regular-text code" />
-    <span class="description">
+    </td><td><span class="description">
         <?php _e('Default in OpenAM is <code>iPlanetDirectoryPro</code>, but can be something different. Check with the OpenAM Administrator') ?>
     </span>
-</td>
+    </td>
 </tr>
 
-<tr valign="top">
-<th scope="row"><label for="openam_base_url"><?php _e('OpenAM base URL') ?></label></th>
-<td><input type="text" name="openam_base_url" value="<?php echo get_option('openam_base_url'); ?>" class="regular-text code" />
-    <span class="description">
-               <?php _e('The OpenAM deployment URL. Example: <code>http://openam.example.com:80/openam</code>') ?>
+<tr valign="middle">
+<td><label for="openam_cookie_domain"><?php _e('Cookie domain') ?></label></td>
+<td><input type="text" name="openam_cookie_domain" value="<?php echo get_option('openam_cookie_domain'); ?>" class="regular-text code" />
+    </td><td><span class="description">
+        <?php _e('The Domain where the above cookie will be set, once the user authenticates. Default is the last 2 components of the domain, if available, but can be something different. Depends on your deployment') ?>
     </span>
-</td>
+    </td>
 </tr>
 
-<tr valign="top">
-<th scope="row"><label for="openam_realm"><?php _e('OpenAM realm where users reside') ?></label></th>
+<tr valign="middle">
+<td><label for="openam_base_url"><?php _e('OpenAM base URL') ?></label></td>
+<td valign=""top"><input type="text" name="openam_base_url" value="<?php echo get_option('openam_base_url'); ?>" class="regular-text code" />
+    </td><td><span class="description">
+        <?php _e('The OpenAM deployment URL. Example: <code>http://openam.example.com:80/openam</code>') ?>
+    </span>
+    </td>
+</tr>
+
+<tr valign="middle">
+<td><label for="openam_realm"><?php _e('OpenAM realm where users reside') ?></label></td>
 <td><input type="text" name="openam_realm" value="<?php echo get_option('openam_realm'); ?>" class="regular-text code" />
-    <span class="description">
+    </td><td>
+        <span class="description">
                <?php _e('The OpenAM realm where users reside. Example: <code>/</code> or <code>/myrealm</code>') ?>
     </span>
-</td>
+    </td>
 </tr>
 
-<tr valign="top">
-<th scope="row"><label for="openam_authn_module"><?php _e('OpenAM Authentication Module') ?></label></th>
-<td><input type="text" name="openam_authn_module" value="<?php echo get_option('openam_authn_module'); ?>" class="regular-text code" />
-    <span class="description">
+<tr valign="middle">
+<td><label for="openam_authn_module"><?php _e('OpenAM Authentication Module') ?></label></td>
+<td valign="top"><input type="text" name="openam_authn_module" value="<?php echo get_option('openam_authn_module'); ?>" class="regular-text code" />
+    </td><td><span class="description">
                <?php _e('The Authentication module to use in the OpenAM. Example: <code>DataStore</code> or <code>LDAP</code>
                    <br/><italic>Note: Module and Service Chain can not be used at the same time. This option can be left empty, in which case the default module configured in OpenAM wil be used. 
                    The module should only accept user and password, if that is not the case then enable \'Redirect to OpenAM for Login\'.</italic>') ?>
     </span>
-</td>
+    </td>
 </tr>
 
 
-<tr valign="top">
-<th scope="row"><label for="openam_service_chain"><?php _e('OpenAM Authentication Service (Chain)') ?></label></th>
+<tr valign="middle">
+<td><label for="openam_service_chain"><?php _e('OpenAM Authentication Service (Chain)') ?></label></td>
 <td><input type="text" name="openam_service_chain" value="<?php echo get_option('openam_service_chain'); ?>" class="regular-text code" />
-    <span class="description">
+    </td><td>
+        <span class="description">
                <?php _e('The Authentication Service or Chain to be used in the OpenAM. Example: <code>ldapService</code> or <code>myChain</code>
                    <br/><italic>Note: Service Chain and Module can not be used at the same time. This option can be left empty, in which case the default service configured in OpenAM wil be used.
                    The modules in the chain should only accept user and password, if that is not the case then enable \'Redirect to OpenAM for Login\'.</italic>') ?>
     </span>
-</td>
+    </td>
 </tr>
 
-<tr valign="top">
-<th scope="row"><?php _e('Logout from OpenAM when logging out from Wordpress') ?></th>
+<tr valign="middle">
+<td><?php _e('Logout from OpenAM when logging out from Wordpress') ?></td>
 <td>
     <fieldset><legend class="screen-reader-text"><span>
         <?php _e('Logout from OpenAM when logging out from Wordpress') ?>
             </span></legend><label for="openam_logout_too">
 <input name="openam_logout_too" type="checkbox" id="openam_logout_too" value="1" <?php checked('1', get_option('openam_logout_too')); ?> />
-<?php _e('If selected, when the user logs out from Wordpress it will also terminate the session in OpenAM.') ?></label>
-</fieldset></td>
+</td><td><span class="description"><?php _e('If selected, when the user logs out from Wordpress it will also terminate the session in OpenAM.') ?></label>
+        </span></fieldset></td>
 
-<tr valign="top">
-<th scope="row"><label for="openam_wordpress_attributes"><?php _e('OpenAM attributes to map Login Name and Mail address') ?></label></th>
+<tr valign="middle">
+<td><label for="openam_wordpress_attributes"><?php _e('OpenAM attributes to map Login Name and Mail address') ?></label></td>
 <td><input type="text" name="openam_wordpress_attributes" value="<?php echo get_option('openam_wordpress_attributes'); ?>" class="regular-text code" />
-    <span class="description">
+    </td><td><span class="description">
         <?php _e('Comma separated name of the OpenAM attributes to map login name and mail. Example: <code>uid,mail</code>') ?>
     </span>
-</td>
+    </td>
 </tr>
 
-<tr valign="top">
-<th scope="row"><?php _e('Redirect to OpenAM for Login') ?></th>
+<tr valign="middle">
+<td><?php _e('Redirect to OpenAM for Login') ?></td>
 <td>
     <fieldset><legend class="screen-reader-text"><span>
         <?php _e('Redirect to OpenAM for Login') ?>
             </span></legend><label for="openam_do_redirect">
 <input name="openam_do_redirect" type="checkbox" id="openam_do_redirect" value="1" <?php checked('1', get_option('openam_do_redirect')); ?> />
-<?php _e('For authentication chains and modules with a more complex workflow than user/password, redirect to OpenAM') ?></label>
-</fieldset></td></tr>
+</td><td><span class="description"><?php _e('For authentication chains and modules with a more complex workflow than user/password, redirect to OpenAM') ?></label>
+        </span></fieldset></td></tr>
 
-<tr valign="top">
-<th scope="row"><?php _e('Enable debug') ?></th>
+<tr valign="middle">
+<td><?php _e('Enable debug') ?></td>
 <td>
     <fieldset><legend class="screen-reader-text"><span>
         <?php _e('Enable debug') ?>
             </span></legend><label for="openam_debug_enabled">
 <input name="openam_debug_enabled" type="checkbox" id="openam_debug_enabled" value="1" <?php checked('1', get_option('openam_debug_enabled')); ?> />
-<?php _e('Enables debug in the module. If enabled, the debug file must be specified. Remember to turn-off in production environment') ?></label>
-</fieldset></td>
+</td><td><span class="description"><?php _e('Enables debug in the module. If enabled, the debug file must be specified. Remember to turn-off in production environment') ?></label>
+        </span></fieldset></td>
 </tr>
 
-<tr valign="top">
-<th scope="row"><label for="openam_debug_file"><?php _e('Name of the debug file') ?></label></th>
+<tr valign="middle">
+<td><label for="openam_debug_file"><?php _e('Name of the debug file') ?></label></td>
 <td><input type="text" name="openam_debug_file" value="<?php echo get_option('openam_debug_file'); ?>" class="regular-text code" />
-    <span class="description">
+    </td><td><span class="description">
         <?php _e('Name of the debug file') ?>
     </span>
-</td>
+    </td>
 </tr>
 
 </table>
 
 <input type="hidden" name="action" value="update" />
-<input type="hidden" name="page_options" value="openam_rest_enabled,openam_legacy_apis_enabled,openam_cookie_name,openam_base_url,
-       openam_realm,openam_authn_module,openam_service_chain,openam_logout_too,openam_do_redirect,openam_wordpress_attributes,
+<input type="hidden" name="page_options" value="openam_rest_enabled,
+       openam_legacy_apis_enabled,openam_cookie_name,openam_cookie_dmain, 
+       openam_base_url,openam_realm,openam_authn_module,openam_service_chain,
+       openam_logout_too,openam_do_redirect,openam_wordpress_attributes,
        openam_debug_enabled, openam_debug_file" />
 
 <p class="submit">

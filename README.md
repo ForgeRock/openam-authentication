@@ -3,12 +3,12 @@
 Wordpress plugin to authenticate using OpenAM
 <b>OpenAM Authentication</b>
 <table border="0">
-<tr><td>Contributors:</td><td>forgerock1</td></tr>
+<tr><td>Contributors:</td><td>forgerock1,forgerock,marius-g,qcastel</td></tr>
 <tr><td>Link:</td><td> http://www.forgerock.org/</td></tr>
 <tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
-<tr><td>Tested up to:</td><td>4.0.0</td></tr>
-<tr><td>Stable tag:</td><td>1.1.1</td></tr>
+<tr><td>Tested up to:</td><td>4.1.0</td></tr>
+<tr><td>Stable tag:</td><td>1.2.0</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
 <tr><td>License URL</td><td>http://forgerock.org/projects/cddlv1-0/</td></tr>
 </table>
@@ -91,4 +91,9 @@ Updated user access to use roles and not levels
 1.1
 <dd>Introduced the Legacy REST API mode to support OpenAM versions older than 11.0
 <dd>An option to enable debugging and specify the name of the debug file was introduced
+<dt>
+1.2
+<dd>Added an option to specify the domain where the SSO cookie will be set.
+<dd>The uid and email address attribute name were hardcoded, now they are properly done.
+<dd>Change a little bit the Options (Settings) page
 </dl>
