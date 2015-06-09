@@ -140,9 +140,9 @@ function openam_auth($user, $username, $password) {
             $tokenId = authenticateWithOpenAM($username, $password);
             if (!$tokenId) {
                 // User does not exist,  send back an error message
-                return new WP_Error('denied', __("<strong>ERROR</strong>: The combination username/password was not correct"));
+                return new WP_Error('denied', esc_html__( 'The combination username/password was not correct', 'openam-auth' ) );
             } elseif ($tokenId == 2) {
-                return new WP_Error('denied', __("<strong>ERROR</strong>: Error when trying to reach the OpenAM"));
+                return new WP_Error('denied', esc_html__( 'Error when trying to reach the OpenAM', 'openam-auth' ) );
             } else {
                 $amAttributes = getAttributesFromOpenAM($tokenId, $username, OPENAM_WORDPRESS_ATTRIBUTES);
                 if ($amAttributes) {
