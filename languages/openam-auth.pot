@@ -1,0 +1,195 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenAM Authentication\n"
+"POT-Creation-Date: 2015-06-09 12:28+0100\n"
+"PO-Revision-Date: 2015-06-09 12:21+0100\n"
+"Last-Translator: Bjørn Johansen <post@bjornjohansen.no>\n"
+"Language-Team: Bjørn Johansen <post@bjornjohansen.no>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: openam-rest.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: openam-rest.php:143
+msgid "The combination username/password was not correct"
+msgstr ""
+
+#: openam-rest.php:145
+msgid "Error when trying to reach the OpenAM"
+msgstr ""
+
+#: openam-rest.php:569
+msgid "OpenAM REST Plugin"
+msgstr ""
+
+#: openam-rest.php:577 openam-rest.php:578
+msgid "OpenAM REST enabled"
+msgstr ""
+
+#: openam-rest.php:580
+msgid "Enable or disable this plugin"
+msgstr ""
+
+#: openam-rest.php:584
+msgid "OpenAM-Legacy enabled"
+msgstr ""
+
+#: openam-rest.php:585
+msgid "OpenAM Legacy enabled"
+msgstr ""
+
+#: openam-rest.php:587
+msgid ""
+"Enable or disable the use of legacy REST APIs (For OpenAM 11.0 and older)"
+msgstr ""
+
+#: openam-rest.php:591
+msgid "OpenAM Session cookie"
+msgstr ""
+
+#: openam-rest.php:594
+#, php-format
+msgid ""
+"Default in OpenAM is %s, but can be something different. Check with the "
+"OpenAM Administrator"
+msgstr ""
+
+#: openam-rest.php:600
+msgid "Cookie domain"
+msgstr ""
+
+#: openam-rest.php:603
+msgid ""
+"The Domain where the above cookie will be set, once the user authenticates. "
+"Default is the last 2 components of the domain, if available, but can be "
+"something different. Depends on your deployment"
+msgstr ""
+
+#: openam-rest.php:609
+msgid "OpenAM base URL"
+msgstr ""
+
+#: openam-rest.php:612
+#, php-format
+msgid "The OpenAM deployment URL. Example: %s"
+msgstr ""
+
+#: openam-rest.php:618
+msgid "OpenAM realm where users reside"
+msgstr ""
+
+#: openam-rest.php:622
+#, php-format
+msgid "The OpenAM realm where users reside. Example: %1$s or %2$s"
+msgstr ""
+
+#: openam-rest.php:628
+msgid "OpenAM Authentication Module"
+msgstr ""
+
+#: openam-rest.php:633
+msgid "The Authentication module to use in the OpenAM. Example: %1$s or %2$"
+msgstr ""
+
+#: openam-rest.php:635
+msgid ""
+"Note: Module and Service Chain can not be used at the same time. This option "
+"can be left empty, in which case the default module configured in OpenAM wil "
+"be used.\n"
+"                   The module should only accept user and password, if that "
+"is not the case then enable “Redirect to OpenAM for Login”."
+msgstr ""
+
+#: openam-rest.php:643
+msgid "OpenAM Authentication Service (Chain)"
+msgstr ""
+
+#: openam-rest.php:648
+#, php-format
+msgid ""
+"The Authentication Service or Chain to be used in the OpenAM. Example: %1$s "
+"or %2$s"
+msgstr ""
+
+#: openam-rest.php:657 openam-rest.php:660
+msgid "Logout from OpenAM when logging out from Wordpress"
+msgstr ""
+
+#: openam-rest.php:663
+msgid ""
+"If selected, when the user logs out from Wordpress it will also terminate "
+"the session in OpenAM."
+msgstr ""
+
+#: openam-rest.php:667
+msgid "OpenAM attributes to map Login Name and Mail address"
+msgstr ""
+
+#: openam-rest.php:670
+#, php-format
+msgid ""
+"Comma separated name of the OpenAM attributes to map login name and mail. "
+"Example: %s"
+msgstr ""
+
+#: openam-rest.php:676 openam-rest.php:679
+msgid "Redirect to OpenAM for Login"
+msgstr ""
+
+#: openam-rest.php:682
+msgid ""
+"For authentication chains and modules with a more complex workflow than user/"
+"password, redirect to OpenAM"
+msgstr ""
+
+#: openam-rest.php:687 openam-rest.php:690
+msgid "Enable debug"
+msgstr ""
+
+#: openam-rest.php:693
+msgid ""
+"Enables debug in the module. If enabled, the debug file must be specified. "
+"Remember to turn off in production environment"
+msgstr ""
+
+#: openam-rest.php:698 openam-rest.php:701
+msgid "Name of the debug file"
+msgstr ""
+
+#: openam-rest.php:716
+msgid "Save Changes"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "OpenAM Authentication"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://forgerock.org"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"This plugin is used to authenticate users using OpenAM. The plugin uses REST "
+"calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/"
+"users/ and /json/sessions. Therefore you need OpenAM 11.0 and above."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid ""
+"Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list "
+"firt)"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.forgerock.com"
+msgstr ""
