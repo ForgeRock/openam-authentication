@@ -446,6 +446,7 @@ function createAttributesLegacyURL($tokenId) {
             "?subjectid=" . $tokenId;
     if (OPENAM_WORDPRESS_ATTRIBUTES != '') {
         $attributes = explode(',', OPENAM_WORDPRESS_ATTRIBUTES);
+        $attribute_uri = '';
         foreach ($attributes as $attributename) {
             $attribute_uri .= "&attributenames=" . $attributename;
         }
