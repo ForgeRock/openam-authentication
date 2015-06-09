@@ -32,6 +32,7 @@ add_filter( 'logout_url',     'openam_logout', 10,2 );
 add_filter( 'login_url',      'openam_login_url',10,2 );
 add_action( 'plugins_loaded', 'openam_i18n' );
 add_action( 'plugins_loaded', 'openam_sso' );
+add_action( 'wp_logout',      'openam_wp_logout' );
  
 // Options
 // OpenAM General configuration parameters
@@ -468,29 +469,24 @@ function openam_logout($logout_url, $redirect=null) {
  * It logs out a user from Wordpress and if it was opted to destory the OpenAM session,
  * it will logout the user from OpenAM as well.
  */
-if ( !function_exists( 'wp_logout' ) ) :
-function wp_logout() {    
+function openam_wp_logout() {
 
-    if (OPENAM_REST_ENABLED and OPENAM_LOGOUT_TOO) {
-        $tokenId=$_COOKIE[OPENAM_COOKIE_NAME];
-        if(!empty($tokenId) AND is_user_logged_in()) {     
-            do_action('wp_logout');     
-            $headers = array(OPENAM_COOKIE_NAME => $tokenId,
-                             'Content-Type' => 'application/json');
+    if ( OPENAM_REST_ENABLED && OPENAM_LOGOUT_TOO ) {
+        $tokenId = $_COOKIE[ OPENAM_COOKIE_NAME ];
+        if( ! empty( $tokenId ) && is_user_logged_in() ) {
+            $headers = array( OPENAM_COOKIE_NAME => $tokenId,
+                'Content-Type' => 'application/json');
             $url = OPENAM_BASE_URL . OPENAM_SESSION_URI . "?_action=logout";
-            $response = wp_remote_post($url, array('headers' => $headers,
+            $response = wp_remote_post($url, array( 'headers' => $headers,
                 'sslverify' => false,
-                    ));
-            openam_debug("wp_logout: RAW RESPONSE LOGOUT: " . 
-                    print_r($response, TRUE));
+            ));
+            openam_debug( 'wp_logout: RAW RESPONSE LOGOUT: ' .
+                print_r( $response, TRUE ) );
             $expiration_date = time() - 60 ;
-            setcookie(OPENAM_COOKIE_NAME, '', $expiration_date, '/', DOMAIN);
+            setcookie( OPENAM_COOKIE_NAME, '', $expiration_date, '/', DOMAIN );
         }
-    } 
-    wp_clear_auth_cookie();
-    do_action('wp_logout');   
+    }
 }
-endif;
 
 /* Creates the proper OpenAM authentication URL using the parameters configured */
 function createOpenAMLoginURL() {
