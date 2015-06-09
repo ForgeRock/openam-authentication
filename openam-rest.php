@@ -609,7 +609,7 @@ function openam_rest_plugin_options() {
                     <td><label for="openam_base_url"><?php esc_html_e( 'OpenAM base URL', 'openam-auth' ); ?></label></td>
                     <td valign="top"><input type="text" name="openam_base_url" value="<?php echo esc_attr( get_option('openam_base_url' ) ); ?>" class="regular-text code" />
                     </td><td><span class="description">
-        <?php printf( esc_html__( 'The OpenAM deployment URL. Example: %s', 'openam-auth' ), '<code>https://openam.example.com:80/openam</code>' ); ?>
+        <?php printf( esc_html__( 'The OpenAM deployment URL. Example: %s', 'openam-auth' ), '<code>https://openam.example.com:443/openam</code>' ); ?>
     </span>
                     </td>
                 </tr>
