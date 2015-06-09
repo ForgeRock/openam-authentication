@@ -272,8 +272,8 @@ function authenticateWithModernOpenAM($username, $password) {
             $number_of_hours = 2;
             $expiration_date = time() + 60 * 60 * $number_of_hours;
             setrawcookie(OPENAM_COOKIE_NAME, $amResponse['tokenId'], $expiration_date, '/', DOMAIN);
-            return $amResponse['tokenId'];
             openam_debug("authenticateWithModernOpenAM:: AUTHN Response: " . print_r($amResponse,TRUE));
+            return $amResponse['tokenId'];
         }
         return 0;
     }
