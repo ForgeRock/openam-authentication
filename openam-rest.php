@@ -481,7 +481,7 @@ function openam_wp_logout() {
             ));
             openam_debug( 'wp_logout: RAW RESPONSE LOGOUT: ' .
                 print_r( $response, TRUE ) );
-            $expiration_date = time() - 60 ;
+            $expiration_date = time() - 3600;
             setcookie( OPENAM_COOKIE_NAME, '', $expiration_date, '/', DOMAIN );
         }
     }
