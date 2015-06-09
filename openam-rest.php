@@ -34,19 +34,22 @@ add_action( 'plugins_loaded', 'openam_i18n' );
  
 // Options
 // OpenAM General configuration parameters
-add_option( 'openam_rest_enabled',                 0 );
-add_option( 'openam_legacy_apis_enabled',          0 );
-add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
-add_option( 'openam_cookie_domain',                substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')) );
-add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
-add_option( 'openam_realm',                        '' );
-add_option( 'openam_authn_module',                 '' );
-add_option( 'openam_service_chain',                '' );
-add_option( 'openam_logout_too',                   0);
-add_option( 'openam_wordpress_attributes',         'uid,mail' );
-add_option( 'openam_do_redirect',                  0);
-add_option( 'openam_debug_enabled',                0);
-add_option( 'openam_debug_file',                   '/Users/victor/logFile');
+function openam_plugin_activate() {
+    add_option( 'openam_rest_enabled',                 0 );
+    add_option( 'openam_legacy_apis_enabled',          0 );
+    add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
+    add_option( 'openam_cookie_domain',                substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')) );
+    add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
+    add_option( 'openam_realm',                        '' );
+    add_option( 'openam_authn_module',                 '' );
+    add_option( 'openam_service_chain',                '' );
+    add_option( 'openam_logout_too',                   0);
+    add_option( 'openam_wordpress_attributes',         'uid,mail' );
+    add_option( 'openam_do_redirect',                  0);
+    add_option( 'openam_debug_enabled',                0);
+    add_option( 'openam_debug_file',                   '/Users/victor/logFile');
+}
+register_activation_hook( __FILE__, 'openam_plugin_activate' );
 
 // Constants
 // OpenAM General Configuration parameters
