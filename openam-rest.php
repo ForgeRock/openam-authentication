@@ -49,7 +49,7 @@ function openam_plugin_activate() {
     add_option( 'openam_wordpress_attributes',         'uid,mail' );
     add_option( 'openam_do_redirect',                  0);
     add_option( 'openam_debug_enabled',                0);
-    add_option( 'openam_debug_file',                   '/Users/victor/logFile');
+    add_option( 'openam_debug_file',                   tempnam( sys_get_temp_dir(), 'openam' ) );
 }
 register_activation_hook( __FILE__, 'openam_plugin_activate' );
 
