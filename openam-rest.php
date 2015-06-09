@@ -1,11 +1,11 @@
 <?php 
 /*
 Plugin Name: OpenAM Authentication
-Plugin URI: http://www.forgerock.org
+Plugin URI: https://forgerock.org
 Description: This plugin is used to authenticate users using OpenAM. The plugin uses REST calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/users/ and /json/sessions. Therefore you need OpenAM 11.0 and above.
 Version: 1.2
 Author: Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list firt)
-Author URI: http://www.forgerock.com/
+Author URI: http://www.forgerock.com
 Text Domain: openam-auth
 */
 
@@ -14,7 +14,7 @@ Text Domain: openam-auth
  * Distribution License (the License). You may not use this file except in compliance with the
  * License.
  *
- * You can obtain a copy of the License at http://forgerock.org/projects/cddlv1-0/. See the License for the
+ * You can obtain a copy of the License at https://forgerock.org/projects/cddlv1-0/. See the License for the
  * specific language governing permission and limitations under the License.
  *
  * When distributing Covered Software, include this CDDL Header Notice in each file and include
@@ -609,7 +609,7 @@ function openam_rest_plugin_options() {
                     <td><label for="openam_base_url"><?php esc_html_e( 'OpenAM base URL', 'openam-auth' ); ?></label></td>
                     <td valign="top"><input type="text" name="openam_base_url" value="<?php echo esc_attr( get_option('openam_base_url' ) ); ?>" class="regular-text code" />
                     </td><td><span class="description">
-        <?php printf( esc_html__( 'The OpenAM deployment URL. Example: %s', 'openam-auth' ), '<code>http://openam.example.com:80/openam</code>' ); ?>
+        <?php printf( esc_html__( 'The OpenAM deployment URL. Example: %s', 'openam-auth' ), '<code>https://openam.example.com:80/openam</code>' ); ?>
     </span>
                     </td>
                 </tr>
