@@ -49,7 +49,7 @@ function openam_plugin_activate() {
     add_option( 'openam_wordpress_attributes',         'uid,mail' );
     add_option( 'openam_do_redirect',                  0);
     add_option( 'openam_debug_enabled',                0);
-    add_option( 'openam_debug_file',                   tempnam( sys_get_temp_dir(), 'openam' ) );
+    add_option( 'openam_debug_file',                   get_temp_dir() . DIRECTORY_SEPARATOR . wp_unique_filename( get_temp_dir(), 'openam-' . wp_generate_password( mt_rand( 32, 64 ), false ) ); // generate semi-secret filename for logging
 }
 register_activation_hook( __FILE__, 'openam_plugin_activate' );
 
@@ -531,6 +531,7 @@ function openam_login_url($login_url, $redirect = null) {
  */
 function openam_debug($message) {
     if (OPENAM_DEBUG_ENABLED) {
+        chmod( OPENAM_DEBUG_FILE, 0600 );
         error_log($message . "\n", 3, OPENAM_DEBUG_FILE);
     }
 }
