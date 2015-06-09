@@ -91,7 +91,6 @@ define( 'SERVICE_PARAM',                            'service');
 define( 'MODULE_PARAM',                             'module');
 define( 'AUTH_TYPE',                                'authIndexType');
 define( 'AUTH_VALUE',                               'authIndexValue');
-define( 'DOMAIN',                                   substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')));
 
 
 /**
