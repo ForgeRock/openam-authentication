@@ -40,7 +40,7 @@ function openam_plugin_activate() {
     add_option( 'openam_rest_enabled',                 0 );
     add_option( 'openam_legacy_apis_enabled',          0 );
     add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
-    add_option( 'openam_cookie_domain',                substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')) );
+    add_option( 'openam_cookie_domain',                 $_SERVER['HTTP_HOST'] );
     add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
     add_option( 'openam_realm',                        '' );
     add_option( 'openam_authn_module',                 '' );
