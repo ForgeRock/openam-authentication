@@ -472,7 +472,7 @@ function openam_wp_logout() {
 
     if ( OPENAM_REST_ENABLED && OPENAM_LOGOUT_TOO ) {
         $tokenId = $_COOKIE[ OPENAM_COOKIE_NAME ];
-        if( ! empty( $tokenId ) && is_user_logged_in() ) {
+        if( ! empty( $tokenId ) ) {
             $headers = array( OPENAM_COOKIE_NAME => $tokenId,
                 'Content-Type' => 'application/json');
             $url = OPENAM_BASE_URL . OPENAM_SESSION_URI . "?_action=logout";
