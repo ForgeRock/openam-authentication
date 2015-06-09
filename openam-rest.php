@@ -31,6 +31,7 @@ add_action( 'admin_menu',     'openam_rest_plugin_menu' );
 add_filter( 'logout_url',     'openam_logout', 10,2 );
 add_filter( 'login_url',      'openam_login_url',10,2 );
 add_action( 'plugins_loaded', 'openam_i18n' );
+add_action( 'plugins_loaded', 'openam_sso' );
  
 // Options
 // OpenAM General configuration parameters
@@ -74,6 +75,8 @@ define( 'OPENAM_DEBUG_FILE',                        get_option( 'openam_debug_fi
 define( 'OPENAM_AUTHN_URI',                         '/json/authenticate' );
 define( 'OPENAM_ATTRIBUTES_URI',                    '/json/users/' );
 define( 'OPENAM_SESSION_URI',                       '/json/sessions/' );
+define( 'OPENAM_SESSION_VALIDATION',                '/identity/isTokenValid' );
+define( 'OPENAM_IDENTITY_ATTRIBUTES_URI',           '/identity/attributes' );
 
 // Legacy
 define( 'OPENAM_LEGACY_AUTHN_URI',                  '/identity/json/authenticate' );
@@ -89,20 +92,60 @@ define( 'AUTH_TYPE',                                'authIndexType');
 define( 'AUTH_VALUE',                               'authIndexValue');
 define( 'DOMAIN',                                   substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')));
 
+
+/**
+ * Auto-login the user
+ */
+function openam_sso() {
+    if ( ( isset( $_GET['action'] ) && 'logout' == $_GET['action'] ) || ( isset( $_GET['loggedout'] ) && 'yes' == $_GET['loggedout'] ) ) {
+        return false;
+    }
+    // Let's see if the user is already logged in the IDP
+    if ( isset( $_COOKIE[ OPENAM_COOKIE_NAME ] ) ) {
+        $tokenId = $_COOKIE[ OPENAM_COOKIE_NAME ];
+        if ( ! empty( $tokenId ) && ! is_user_logged_in() ) {
+            openam_debug( 'openam_auth: TOKENID:' . $tokenId );
+            if ( $am_response = openam_sessionsdata( $tokenId ) ) {
+
+                openam_debug( 'openam_auth: Authentication was successful SUCCESS' );
+                openam_debug( 'openam_auth: am_response ' . print_r( $am_response, true ) );
+
+                $amAttributes = getAttributesFromOpenAM( $tokenId, $am_response[ OPENAM_WORDPRESS_ATTRIBUTES_USERNAME ], OPENAM_WORDPRESS_ATTRIBUTES );
+                $usernameAttr = get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_USERNAME );
+                $mailAttr = get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_MAIL );
+
+                openam_debug( 'openam_auth: UID: ' . print_r( $usernameAttr, true ) );
+                openam_debug( 'openam_auth: MAIL: ' . print_r( $mailAttr, true ) );
+
+                // This should return a WP_User instance https://codex.wordpress.org/Class_Reference/WP_User
+                $user = loadUser( $usernameAttr, $mailAttr );
+                wp_set_current_user( $user->ID, $user->user_login );
+                wp_set_auth_cookie( $user->ID);
+                do_action( 'wp_login', $user->user_login );
+                
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 /* Main function */
 function openam_auth($user, $username, $password) {
 
     if (OPENAM_REST_ENABLED) {
-        // Let's see if the user is already logged in the IDP
-        $tokenId = $_COOKIE[OPENAM_COOKIE_NAME];
-        if (!empty($tokenId) AND ! is_user_logged_in()) {
-            openam_debug("openam_auth: TOKENID:" . $tokenId);
-            if (($_GET['action'] != 'logout') OR ( $_GET['loggedout'] != 'yes')) {
-                $am_response = isSessionValid($tokenId);
-                if ($am_response['valid'] or $am_response['valid' == 'true'] or 
-                        $am_response['boolean'] == '1') { // Session was valid
-                    openam_debug("openam_auth: Authentication was succesful");
-                    $amAttributes = getAttributesFromOpenAM($tokenId, $am_response[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME], OPENAM_WORDPRESS_ATTRIBUTES);
+
+        // If username and password has been supplied then we are starting here
+        if ($username != '' and $password != '') {
+            $tokenId = authenticateWithOpenAM($username, $password);
+            if (!$tokenId) {
+                // User does not exist,  send back an error message
+                return new WP_Error('denied', __("<strong>ERROR</strong>: The combination username/password was not correct"));
+            } elseif ($tokenId == 2) {
+                return new WP_Error('denied', __("<strong>ERROR</strong>: Error when trying to reach the OpenAM"));
+            } else {
+                $amAttributes = getAttributesFromOpenAM($tokenId, $username, OPENAM_WORDPRESS_ATTRIBUTES);
+                if ($amAttributes) {
                     $usernameAttr = get_attribute_value($amAttributes,  OPENAM_WORDPRESS_ATTRIBUTES_USERNAME);
                     $mailAttr = get_attribute_value($amAttributes,  OPENAM_WORDPRESS_ATTRIBUTES_MAIL);
                     openam_debug("openam_auth: UID: " . print_r($usernameAttr, TRUE));
@@ -113,54 +156,71 @@ function openam_auth($user, $username, $password) {
                 }
             }
         }
-
-        // If no username nor password, then we are starting here
-        if ($username != '' and $password != '') {
-            $tokenId = authenticateWithOpenAM($username, $password);
-            if (!$tokenId) {
-                // User does not exist,  send back an error message
-                $user = new WP_Error('denied', __("<strong>ERROR</strong>: The combination username/password was not correct"));
-            } elseif ($tokenId == 2) {
-                $user = new WP_Error('denied', __("<strong>ERROR</strong>: Error when trying to reach the OpenAM"));
-            } else {
-                $amAttributes = getAttributesFromOpenAM($tokenId, $username, OPENAM_WORDPRESS_ATTRIBUTES);
-                if ($amAttributes) {
-                    $usernameAttr = get_attribute_value($amAttributes,  OPENAM_WORDPRESS_ATTRIBUTES_USERNAME);
-                    $mailAttr = get_attribute_value($amAttributes,  OPENAM_WORDPRESS_ATTRIBUTES_MAIL);
-			        openam_debug("openam_auth: UID: " . print_r($usernameAttr, TRUE));
-                    openam_debug("openam_auth: MAIL: " . print_r($mailAttr, TRUE));
-                    $user = loadUser($usernameAttr, $mailAttr);
-                    remove_action('authenticate', 'wp_authenticate_username_password', 20);
-                    return $user;
-                }
-            }
-        }
     }
-    return;
+    return false;
 }
 
-/* Verifies that the OpenAM session is valid */
-function isSessionValid($tokenId) {
+function openam_sessionsdata($tokenId)
+{
+
     if (!OPENAM_LEGACY_APIS_ENABLED) {
-        openam_debug("isSessionValid: Legacy Mode Disabled");
-        $sessions_url = OPENAM_BASE_URL . OPENAM_SESSION_URI;
-        $headers = array('Content-Type' => 'application/json');
-        $response = wp_remote_post($sessions_url . $tokenId . "?_action=validate", array('headers' => $headers,
-            'sslverify' => false,
-                ));
-        $amResponse = json_decode($response['body'], true);      
-        return $amResponse;
+        openam_debug("openam_sessionsdata: Legacy Mode Disabled");
+        $isTokenValid_am_response = wp_remote_post(OPENAM_BASE_URL . OPENAM_SESSION_VALIDATION, array('method' => 'POST', 'timeout' => 45, 'redirection' => 5, 'httpversion' => '1.0', 'blocking' => true, 'headers' => array(), 'body' => array('tokenid' => $tokenId), 'sslverify' => false, 'cookies' => array()));
+
+        if (is_wp_error($isTokenValid_am_response)) {
+            $error_message = $isTokenValid_am_response->get_error_message();
+            openam_debug("openam_sessionsdata: is_wp_error" . $error_message);
+        }
+
+        openam_debug("openam_sessionsdata: isTokenValid_am_response " . print_r($isTokenValid_am_response['body'], TRUE));
+
+        $response_string = $isTokenValid_am_response['body'];
+        if (strpos($response_string, 'true') !== FALSE) {
+            openam_debug("openam_sessionsdata: returning true from -> strpos");
+
+            $uid_am_response = wp_remote_post(OPENAM_BASE_URL . OPENAM_IDENTITY_ATTRIBUTES_URI . "?subjectid=" . $tokenId . "&attributenames=uid", array('method' => 'GET', 'timeout' => 45, 'redirection' => 5, 'httpversion' => '1.0', 'blocking' => true, 'headers' => array(), 'sslverify' => false, 'cookies' => array()));
+
+            openam_debug("openam_sessionsdata: username_am_response: " . print_r($uid_am_response, TRUE));
+
+            $am_response = array();
+
+            $lines = preg_split('/\R/', $uid_am_response['body']);
+
+            $mode = 'key';
+            $values = [];
+            $key = 'UNDEFINED';
+            foreach ($lines as $l)
+            {
+                $parts = explode("=", $l);
+                if ($parts[0] != 'userdetails.token.id') {
+                    if ($mode == 'key')
+                    {
+                        $key = $parts[1];
+                        $mode = 'value';
+                    }
+                    else
+                    {
+                        $values[$key] = $parts[1];
+                        $mode = 'key';
+                    }
+                }
+            }
+
+            openam_debug("openam_sessionsdata: values: " . print_r($values, TRUE));
+            $am_response[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME] = $values[OPENAM_WORDPRESS_ATTRIBUTES_USERNAME];
+            openam_debug("openam_sessionsdata: am_response: " . $am_response);
+            return $am_response;
+        }
+
     } else {
-        openam_debug("isSessionValid: Legacy Mode Enabled");
+        openam_debug("openam_sessionsdata: Legacy Mode Enabled");
         $sessions_url = OPENAM_BASE_URL . OPENAM_LEGACY_SESSION_VALIDATION;
-        $response = wp_remote_post($sessions_url . "?tokenid=" . $tokenId, array(
-            'sslverify' => false,
-                ));
-        openam_debug("isSessionValid: isValid Response: " . print_r($response, TRUE));
+        $response = wp_remote_post($sessions_url . "?tokenid=" . $tokenId, array('sslverify' => false,));
+        openam_debug("openam_sessionsdata: isValid Response: " . print_r($response, TRUE));
         $amResponse = json_decode($response['body'], true);
         return $amResponse;
-        
     }
+    return false;
 }
 
 
@@ -367,6 +427,7 @@ function getAttributesFromLegacyOpenAM($tokenId, $attributes) {
             print_r($amResponse, TRUE));
     if ($response['response']['code'] == 200 ) {
         $attr1 = $amResponse['attributes'];
+        $amResponse2 = array();
         foreach ($attr1 as $json_attr){
            $attr_name = $json_attr['name'];
            $attr_value = $json_attr['values'];
