@@ -340,7 +340,6 @@ function createAuthenticationURL() {
 /* Creates the proper OpenAM authentication URL using the parameters configured */
 function createLegacyAuthenticationURIParams() {
 
-    $authentication_url = OPENAM_BASE_URL . OPENAM_LEGACY_AUTHN_URI;
     $uri = '';
     if (OPENAM_REALM != '') {
         $uri = REALM_PARAM . "=" . OPENAM_REALM;
