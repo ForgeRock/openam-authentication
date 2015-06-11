@@ -98,7 +98,7 @@ define( 'AUTH_VALUE',                               'authIndexValue');
  */
 function openam_sso() {
     if ( ( isset( $_GET['action'] ) && 'logout' == $_GET['action'] ) || ( isset( $_GET['loggedout'] ) && 'yes' == $_GET['loggedout'] ) ) {
-        return false;
+        return;
     }
     // Let's see if the user is already logged in the IDP
     if ( isset( $_COOKIE[ OPENAM_COOKIE_NAME ] ) ) {
@@ -119,15 +119,14 @@ function openam_sso() {
 
                 // This should return a WP_User instance https://codex.wordpress.org/Class_Reference/WP_User
                 $user = loadUser( $usernameAttr, $mailAttr );
+
+                // Log in the user
                 wp_set_current_user( $user->ID, $user->user_login );
                 wp_set_auth_cookie( $user->ID);
                 do_action( 'wp_login', $user->user_login );
-                
-                return true;
             }
         }
     }
-    return false;
 }
 
 /* Main function */
