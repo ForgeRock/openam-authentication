@@ -156,7 +156,7 @@ function openam_auth($user, $username, $password) {
             }
         }
     }
-    return false;
+    return $user;
 }
 
 function openam_sessionsdata($tokenId)
