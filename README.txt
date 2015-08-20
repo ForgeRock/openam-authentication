@@ -6,7 +6,7 @@ Requires at least: 3.9
 Tested up to: 4.1.0
 Stable tag: 1.2
 License: CDDLv1.0
-License URI: http://forgerock.org/projects/cddlv1-0/
+License URI: https://forgerock.org/cddlv1-0/
 
 Integrate Wordpress Authentication with OpenAM. Redirection to OpenAM is optional. SSO if there is already an active session.
 

@@ -14,7 +14,7 @@ Text Domain: openam-auth
  * Distribution License (the License). You may not use this file except in compliance with the
  * License.
  *
- * You can obtain a copy of the License at https://forgerock.org/projects/cddlv1-0/. See the License for the
+ * You can obtain a copy of the License at https://forgerock.org/cddlv1-0/. See the License for the
  * specific language governing permission and limitations under the License.
  *
  * When distributing Covered Software, include this CDDL Header Notice in each file and include
