@@ -3,7 +3,7 @@
 Plugin Name: OpenAM Authentication
 Plugin URI: https://forgerock.org
 Description: This plugin is used to authenticate users using OpenAM. The plugin uses REST calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/users/ and /json/sessions. Therefore you need OpenAM 11.0 and above.
-Version: 1.2
+Version: 1.2.1
 Author: Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list firt)
 Author URI: http://www.forgerock.com
 Text Domain: openam-auth
@@ -25,11 +25,15 @@ Text Domain: openam-auth
  * Copyright 2014 ForgeRock AS.
  */
 
+define( 'OPENAM_PLUGIN_VERSION', '1.2.1' );
+
 
 add_filter( 'authenticate',   'openam_auth', 10, 3 );
 add_action( 'admin_menu',     'openam_rest_plugin_menu' );
-add_filter( 'logout_url',     'openam_logout', 10,2 );
-add_filter( 'login_url',      'openam_login_url',10,2 );
+add_filter( 'logout_url',     'openam_logout', 10, 2 );
+add_filter( 'login_url',      'openam_login_url', 10, 2 );
+add_action( 'plugins_loaded', 'openam_maybe_update', 8 ); // first thing to run here
+add_action( 'plugins_loaded', 'openam_setup_constants', 9 ); // second thing to run here
 add_action( 'plugins_loaded', 'openam_i18n' );
 add_action( 'plugins_loaded', 'openam_sso' );
 add_action( 'wp_logout',      'openam_wp_logout' );
@@ -37,8 +41,10 @@ add_action( 'wp_logout',      'openam_wp_logout' );
 // Options
 // OpenAM General configuration parameters
 function openam_plugin_activate() {
+	update_option( 'openam_plugin_version',            OPENAM_PLUGIN_VERSION );
+
 	add_option( 'openam_rest_enabled',                 0 );
-	add_option( 'openam_legacy_apis_enabled',          0 );
+	add_option( 'openam_api_version',                  '1.0' );
 	add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
 	add_option( 'openam_cookie_domain',                 $_SERVER['HTTP_HOST'] );
 	add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
@@ -54,45 +60,75 @@ function openam_plugin_activate() {
 }
 register_activation_hook( __FILE__, 'openam_plugin_activate' );
 
+
+function openam_maybe_update() {
+
+	$registered_version = get_option( 'openam_plugin_version', 0 );
+
+	if ( -1 == version_compare( $registered_version, OPENAM_PLUGIN_VERSION ) ) {
+
+		if ( -1 == version_compare( $registered_version, '1.2.1' ) ) {
+			openam_update_to_1_2_1();
+		}
+
+		update_option( 'openam_plugin_version', OPENAM_PLUGIN_VERSION );
+	}
+}
+
+function openam_update_to_1_2_1() {
+
+	$openam_api_version = get_option( 'openam_api_version', 0 );
+	
+	if ( ! $openam_api_version ) {
+		if ( get_option( 'openam_legacy_apis_enabled', 0 ) ) {
+			update_option( 'openam_api_version', 'legacy' );
+		} else {
+			update_option( 'openam_api_version', '1.0' );
+		}
+	}
+}
+
 // Constants
-// OpenAM General Configuration parameters
-define( 'OPENAM_REST_ENABLED',                      get_option( 'openam_rest_enabled' ) );
-define( 'OPENAM_LEGACY_APIS_ENABLED',               get_option( 'openam_legacy_apis_enabled' ) );
-define( 'OPENAM_COOKIE_NAME',                       get_option( 'openam_cookie_name' ) );
-define( 'DOMAIN',                                   get_option( 'openam_cookie_domain'));
-define( 'OPENAM_BASE_URL',                          get_option( 'openam_base_url' ) );
-define( 'OPENAM_REALM',                             get_option( 'openam_realm' ) );
-define( 'OPENAM_AUTHN_MODULE',                      get_option( 'openam_authn_module' ) );
-define( 'OPENAM_SERVICE_CHAIN',                     get_option( 'openam_service_chain' ) );
-define( 'OPENAM_WORDPRESS_ATTRIBUTES',              get_option( 'openam_wordpress_attributes' ) );
-$OPENAM_WORDPRESS_ATTRIBUTES_ARRAY =  explode(',', OPENAM_WORDPRESS_ATTRIBUTES);
-define( 'OPENAM_WORDPRESS_ATTRIBUTES_USERNAME',     $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[0] );
-define( 'OPENAM_WORDPRESS_ATTRIBUTES_MAIL',         $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[1] );
-define( 'OPENAM_LOGOUT_TOO',                        get_option( 'openam_logout_too' ) );
-define( 'OPENAM_DO_REDIRECT',                       get_option( 'openam_do_redirect' ) );
-define( 'OPENAM_DEBUG_ENABLED',                     get_option( 'openam_debug_enabled' ) );
-define( 'OPENAM_DEBUG_FILE',                        get_option( 'openam_debug_file' ) );
+function openam_setup_constants() {
+	// OpenAM General Configuration parameters
+	define( 'OPENAM_REST_ENABLED',                      get_option( 'openam_rest_enabled' ) );
+	define( 'OPENAM_API_VERSION',                       get_option( 'openam_api_version' ) );
+	define( 'OPENAM_LEGACY_APIS_ENABLED',               ( 'legacy' == OPENAM_API_VERSION ? true : false ) );
+	define( 'OPENAM_COOKIE_NAME',                       get_option( 'openam_cookie_name' ) );
+	define( 'DOMAIN',                                   get_option( 'openam_cookie_domain'));
+	define( 'OPENAM_BASE_URL',                          get_option( 'openam_base_url' ) );
+	define( 'OPENAM_REALM',                             get_option( 'openam_realm' ) );
+	define( 'OPENAM_AUTHN_MODULE',                      get_option( 'openam_authn_module' ) );
+	define( 'OPENAM_SERVICE_CHAIN',                     get_option( 'openam_service_chain' ) );
+	define( 'OPENAM_WORDPRESS_ATTRIBUTES',              get_option( 'openam_wordpress_attributes' ) );
+	$OPENAM_WORDPRESS_ATTRIBUTES_ARRAY =  explode( ',', OPENAM_WORDPRESS_ATTRIBUTES );
+	define( 'OPENAM_WORDPRESS_ATTRIBUTES_USERNAME',     $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[0] );
+	define( 'OPENAM_WORDPRESS_ATTRIBUTES_MAIL',         $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[1] );
+	define( 'OPENAM_LOGOUT_TOO',                        get_option( 'openam_logout_too' ) );
+	define( 'OPENAM_DO_REDIRECT',                       get_option( 'openam_do_redirect' ) );
+	define( 'OPENAM_DEBUG_ENABLED',                     get_option( 'openam_debug_enabled' ) );
+	define( 'OPENAM_DEBUG_FILE',                        get_option( 'openam_debug_file' ) );
 
-// OpenAM API endpoints
-define( 'OPENAM_AUTHN_URI',                         '/json/authenticate' );
-define( 'OPENAM_ATTRIBUTES_URI',                    '/json/users/' );
-define( 'OPENAM_SESSION_URI',                       '/json/sessions/' );
-define( 'OPENAM_SESSION_VALIDATION',                '/identity/isTokenValid' );
-define( 'OPENAM_IDENTITY_ATTRIBUTES_URI',           '/identity/attributes' );
+	// OpenAM API endpoints
+	define( 'OPENAM_AUTHN_URI',                         '/json/authenticate' );
+	define( 'OPENAM_ATTRIBUTES_URI',                    '/json/users/' );
+	define( 'OPENAM_SESSION_URI',                       '/json/sessions/' );
+	define( 'OPENAM_SESSION_VALIDATION',                '/identity/isTokenValid' );
+	define( 'OPENAM_IDENTITY_ATTRIBUTES_URI',           '/identity/attributes' );
 
-// Legacy
-define( 'OPENAM_LEGACY_AUTHN_URI',                  '/identity/json/authenticate' );
-define( 'OPENAM_LEGACY_ATTRIBUTES_URI',             '/identity/json/attributes' );
-define( 'OPENAM_LEGACY_SESSION_VALIDATION',         '/identity/json/isTokenValid' );
-define( 'OPENAM_LEGACY_SESSION_LOGOUT',             '/identity/logout' );
+	// Legacy
+	define( 'OPENAM_LEGACY_AUTHN_URI',                  '/identity/json/authenticate' );
+	define( 'OPENAM_LEGACY_ATTRIBUTES_URI',             '/identity/json/attributes' );
+	define( 'OPENAM_LEGACY_SESSION_VALIDATION',         '/identity/json/isTokenValid' );
+	define( 'OPENAM_LEGACY_SESSION_LOGOUT',             '/identity/logout' );
 
-// Other constants
-define( 'REALM_PARAM',                              'realm');
-define( 'SERVICE_PARAM',                            'service');
-define( 'MODULE_PARAM',                             'module');
-define( 'AUTH_TYPE',                                'authIndexType');
-define( 'AUTH_VALUE',                               'authIndexValue');
-
+	// Other constants
+	define( 'REALM_PARAM',                              'realm');
+	define( 'SERVICE_PARAM',                            'service');
+	define( 'MODULE_PARAM',                             'module');
+	define( 'AUTH_TYPE',                                'authIndexType');
+	define( 'AUTH_VALUE',                               'authIndexValue');
+}
 
 /**
  * Auto-login the user
@@ -637,18 +673,34 @@ function openam_rest_plugin_options() {
 				</tr>
 
 				<tr valign="middle">
-					<td><?php esc_html_e( 'OpenAM-Legacy enabled', 'openam-auth' ); ?></td>
+					<td><?php esc_html_e( 'OpenAM API Version', 'openam-auth' ); ?></td>
 					<td>
 						<fieldset>
-							<legend
-								class="screen-reader-text"><?php esc_html_e( 'OpenAM Legacy enabled', 'openam-auth' ); ?></legend>
-							<label for="openam_legacy_apis_enabled">
-								<input name="openam_legacy_apis_enabled" type="checkbox" id="openam_legacy_apis_enabled"
-								       value="1" <?php checked( '1', get_option( 'openam_legacy_apis_enabled' ) ); ?>>
+							<legend class="screen-reader-text">
+								<?php esc_html_e( 'OpenAM API Version', 'openam-auth' ); ?>
+							</legend>
+							<label for="openam_api_version">
+								<select name="openam_api_version" id="openam_api_version">
+									<option value="1.0" <?php selected( '1.0', get_option( 'openam_rest_enabled' ) ); ?>>1.0 (OpenAM 12 and 13)</option>
+									<option value="legacy" <?php selected( 'legacy', get_option( 'openam_rest_enabled' ) ); ?>>Legacy (OpenAM 9, 10 and 11)</option>
+								</select>
+							</label>
+						</fieldset>
+						<script>
+						jQuery('#openam_api_version').on( 'change', function() {
+
+						} );
+						</script>
+						<td>
+							<span class="description <?php echo ( '1.0' == get_option( 'openam_rest_enabled' ? '' : 'hidden' ) ); ?>" data-openam-api-version="1.0">
+								<?php esc_html_e( 'Please note that single sign on (SSO) only works with the legacy version. Single sign in (SSI) still works.', 'openam-auth' ); ?>
+							</span>
+							<span class="description <?php echo ( 'legacy' == get_option( 'openam_rest_enabled' ? '' : 'hidden' ) ); ?>" data-openam-api-version='legacy'>
+								<?php esc_html_e( 'Legacy mode is selected. SSO is available.', 'openam-auth' ); ?>
+							</span>
+						</td>
 					</td>
-					<td><span
-							class="description"><?php esc_html_e( 'Enable or disable the use of legacy REST APIs (For OpenAM 11.0 and older)', 'openam-auth' ); ?></label>
-		</span></fieldset></td>
+					
 				</tr>
 
 				<tr valign="middle">
