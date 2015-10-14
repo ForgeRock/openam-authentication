@@ -115,8 +115,6 @@ function openam_setup_constants() {
 	define( 'OPENAM_AUTHN_URI',                         '/json/authenticate' );
 	define( 'OPENAM_ATTRIBUTES_URI',                    '/json/users/' );
 	define( 'OPENAM_SESSION_URI',                       '/json/sessions/' );
-	define( 'OPENAM_SESSION_VALIDATION',                '/identity/isTokenValid' );
-	define( 'OPENAM_IDENTITY_ATTRIBUTES_URI',           '/identity/attributes' );
 
 	// Legacy
 	define( 'OPENAM_LEGACY_AUTHN_URI',                  '/identity/json/authenticate' );
@@ -204,16 +202,14 @@ function openam_sessionsdata( $tokenId ) {
 
 	if ( ! OPENAM_LEGACY_APIS_ENABLED ) {
 		openam_debug( 'openam_sessionsdata: Legacy Mode Disabled' );
-		$isTokenValid_am_response = wp_remote_post( OPENAM_BASE_URL . OPENAM_SESSION_VALIDATION, array(
+		$isTokenValid_am_response = wp_remote_post( OPENAM_BASE_URL . OPENAM_SESSION_URI . $tokenId . '?_action=validate' , array(
 			'method'      => 'POST',
 			'timeout'     => 45,
 			'redirection' => 5,
 			'httpversion' => '1.0',
 			'blocking'    => true,
 			'headers'     => array(),
-			'body'        => array(
-				'tokenid' => $tokenId
-			),
+			'body'        => array(),
 			'sslverify'   => false,
 			'cookies'     => array(),
 		) );
@@ -226,45 +222,13 @@ function openam_sessionsdata( $tokenId ) {
 		openam_debug( 'openam_sessionsdata: isTokenValid_am_response ' . print_r( $isTokenValid_am_response['body'], true ) );
 
 		$response_string = $isTokenValid_am_response['body'];
+		$response = json_decode( $response_string );
 
-		if ( false !== strpos( $response_string, 'true' ) ) {
-			openam_debug( 'openam_sessionsdata: returning true from -> strpos' );
+		if ( true == $response->valid ) {
+			openam_debug( 'openam_sessionsdata: returning true from -> $response->valid' );
 
-			$uid_am_response = wp_remote_post( OPENAM_BASE_URL . OPENAM_IDENTITY_ATTRIBUTES_URI . '?subjectid=' . $tokenId . '&attributenames=uid', array(
-				'method'      => 'GET',
-				'timeout'     => 45,
-				'redirection' => 5,
-				'httpversion' => '1.0',
-				'blocking'    => true,
-				'headers'     => array(),
-				'sslverify'   => false,
-				'cookies'     => array(),
-			) );
+			$am_response = (array) $response;
 
-			openam_debug( 'openam_sessionsdata: username_am_response: ' . print_r( $uid_am_response, true ) );
-
-			$am_response = array();
-
-			$lines  = preg_split( '/\R/', $uid_am_response['body'] );
-			$mode   = 'key';
-			$values = array();
-			$key    = 'UNDEFINED';
-
-			foreach ( $lines as $l ) {
-				$parts = explode( '=', $l );
-				if ( 'userdetails.token.id' != $parts[0] ) {
-					if ( 'key' == $mode ) {
-						$key = $parts[1];
-						$mode = 'value';
-					} else {
-						$values[ $key ] = $parts[1];
-						$mode = 'key';
-					}
-				}
-			}
-
-			openam_debug( 'openam_sessionsdata: values: ' . print_r( $values, true ) );
-			$am_response[ OPENAM_WORDPRESS_ATTRIBUTES_USERNAME ] = $values[ OPENAM_WORDPRESS_ATTRIBUTES_USERNAME ];
 			openam_debug( 'openam_sessionsdata: am_response: ' . $am_response );
 
 			return $am_response;
