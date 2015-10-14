@@ -30,6 +30,7 @@ defined( 'ABSPATH' ) or die();
 define( 'OPENAM_PLUGIN_VERSION', '1.2.2' );
 
 include 'openam-settings.php';
+include 'plugin-update.php';
 
 add_filter( 'authenticate',   'openam_auth', 10, 3 );
 add_filter( 'logout_url',     'openam_logout', 10, 2 );
@@ -65,40 +66,6 @@ function openam_plugin_activate() {
 register_activation_hook( __FILE__, 'openam_plugin_activate' );
 
 
-function openam_maybe_update() {
-
-	$registered_version = get_option( 'openam_plugin_version', 0 );
-
-	if ( -1 == version_compare( $registered_version, OPENAM_PLUGIN_VERSION ) ) {
-
-		if ( -1 == version_compare( $registered_version, '1.2.1' ) ) {
-			openam_update_to_1_2_1();
-		}
-
-		if ( -1 == version_compare( $registered_version, '1.2.2' ) ) {
-			openam_update_to_1_2_2();
-		}
-
-		update_option( 'openam_plugin_version', OPENAM_PLUGIN_VERSION );
-	}
-}
-
-function openam_update_to_1_2_1() {
-
-	$openam_api_version = get_option( 'openam_api_version', 0 );
-	
-	if ( ! $openam_api_version ) {
-		if ( get_option( 'openam_legacy_apis_enabled', 0 ) ) {
-			update_option( 'openam_api_version', 'legacy' );
-		} else {
-			update_option( 'openam_api_version', '1.0' );
-		}
-	}
-}
-
-function openam_update_to_1_2_2() {
-	update_option( 'openam_sslverify', 'false' );
-}
 
 // Constants
 function openam_setup_constants() {
