@@ -3,7 +3,7 @@
 Plugin Name: OpenAM Authentication
 Plugin URI: https://forgerock.org
 Description: This plugin is used to authenticate users using OpenAM. The plugin uses REST calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/users/ and /json/sessions. Therefore you need OpenAM 11.0 and above.
-Version: 1.2.1
+Version: 1.2.2
 Author: Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list firt)
 Author URI: http://www.forgerock.com
 Text Domain: openam-auth
@@ -27,7 +27,7 @@ Text Domain: openam-auth
 
 defined( 'ABSPATH' ) or die();
 
-define( 'OPENAM_PLUGIN_VERSION', '1.2.1' );
+define( 'OPENAM_PLUGIN_VERSION', '1.2.2' );
 
 include 'openam-settings.php';
 
@@ -58,6 +58,8 @@ function openam_plugin_activate() {
 	add_option( 'openam_do_redirect',                  0 );
 	add_option( 'openam_debug_enabled',                0 );
 
+	add_option( 'openam_sslverify',                    'false' );
+
 	add_option( 'openam_debug_file',                   get_temp_dir() . DIRECTORY_SEPARATOR . wp_unique_filename( get_temp_dir(), 'openam-' . wp_generate_password( mt_rand( 32, 64 ), false ) ) ); // generate semi-secret filename for logging
 }
 register_activation_hook( __FILE__, 'openam_plugin_activate' );
@@ -71,6 +73,10 @@ function openam_maybe_update() {
 
 		if ( -1 == version_compare( $registered_version, '1.2.1' ) ) {
 			openam_update_to_1_2_1();
+		}
+
+		if ( -1 == version_compare( $registered_version, '1.2.2' ) ) {
+			openam_update_to_1_2_2();
 		}
 
 		update_option( 'openam_plugin_version', OPENAM_PLUGIN_VERSION );
@@ -88,6 +94,10 @@ function openam_update_to_1_2_1() {
 			update_option( 'openam_api_version', '1.0' );
 		}
 	}
+}
+
+function openam_update_to_1_2_2() {
+	update_option( 'openam_sslverify', 'false' );
 }
 
 // Constants
@@ -110,6 +120,7 @@ function openam_setup_constants() {
 	define( 'OPENAM_DO_REDIRECT',                       get_option( 'openam_do_redirect' ) );
 	define( 'OPENAM_DEBUG_ENABLED',                     get_option( 'openam_debug_enabled' ) );
 	define( 'OPENAM_DEBUG_FILE',                        get_option( 'openam_debug_file' ) );
+	define( 'OPENAM_SSLVERIFY',                         ( 'true' == get_option( 'openam_sslverify' ) ? true : false ) );
 
 	// OpenAM API endpoints
 	define( 'OPENAM_AUTHN_URI',                         '/json/authenticate' );
@@ -198,6 +209,9 @@ function openam_auth( $user, $username, $password ) {
 	return $user;
 }
 
+/**
+ * Validate a session
+ */
 function openam_sessionsdata( $tokenId ) {
 
 	if ( ! OPENAM_LEGACY_APIS_ENABLED ) {
@@ -210,7 +224,7 @@ function openam_sessionsdata( $tokenId ) {
 			'blocking'    => true,
 			'headers'     => array(),
 			'body'        => array(),
-			'sslverify'   => false,
+			'sslverify'   => OPENAM_SSLVERIFY,
 			'cookies'     => array(),
 		) );
 
@@ -237,7 +251,7 @@ function openam_sessionsdata( $tokenId ) {
 	} else {
 		openam_debug( 'openam_sessionsdata: Legacy Mode Enabled' );
 		$sessions_url = OPENAM_BASE_URL . OPENAM_LEGACY_SESSION_VALIDATION;
-		$response     = wp_remote_post( $sessions_url . '?tokenid=' . $tokenId, array( 'sslverify' => false ) );
+		$response     = wp_remote_post( $sessions_url . '?tokenid=' . $tokenId, array( 'sslverify' => OPENAM_SSLVERIFY ) );
 		openam_debug( 'openam_sessionsdata: isValid Response: ' . print_r( $response, true ) );
 		$amResponse   = json_decode( $response['body'], true );
 
@@ -292,7 +306,7 @@ function authenticateWithModernOpenAM( $username, $password ) {
 	$response = wp_remote_post( $authentication_url, array(
 		'headers'   => $headers,
 		'body'      => '{}',
-		'sslverify' => false,
+		'sslverify' => OPENAM_SSLVERIFY,
 	) );
 	openam_debug( 'authenticateWithModernOpenAM: RAW AUTHN RESPONSE: ' . print_r( $response, true ) );
 
@@ -321,7 +335,7 @@ function authenticateWithLegacyOpenAM( $username, $password ) {
 	$uri       = '?username=' . $username . '&password=' . $password . $uri_param;
 	$response  = wp_remote_post( $authentication_url . $uri, array(
 		'headers'   => $headers,
-		'sslverify' => false,
+		'sslverify' => OPENAM_SSLVERIFY,
 	) );
 	openam_debug( 'authenticateWithLegacyOpenAM: RAW AUTHN RESPONSE: ' . print_r( $response, true ) );
 
@@ -431,7 +445,7 @@ function getAttributesFromModernOpenAM( $tokenId, $username, $attributes ) {
 	openam_debug( 'getAttributesFromModernOpenAM: full url: ' . $url );
 	$response = wp_remote_get( $url, array(
 		'headers'   => $headers,
-		'sslverify' => false,
+		'sslverify' => OPENAM_SSLVERIFY,
 	) );
 	openam_debug( 'getAttributesFromModernOpenAM: RAW ATTR RESPONSE: ' . print_r( $response, true ) );
 	$amResponse = json_decode( $response['body'], true );
@@ -460,7 +474,7 @@ function getAttributesFromLegacyOpenAM( $tokenId, $attributes ) {
 	$attributes_url = createAttributesLegacyURL( $tokenId );
 
 	openam_debug( 'getAttributesFromLegacyOpenAM: Attributes URL: ' . $attributes_url );
-	$response = wp_remote_get( $attributes_url, array( 'sslverify' => false ) );
+	$response = wp_remote_get( $attributes_url, array( 'sslverify' => OPENAM_SSLVERIFY ) );
 	openam_debug( 'getAttributesFromLegacyOpenAM: RAW ATTRS RESPONSE: ' . print_r( $response, true ) );
 	$amResponse = json_decode( $response['body'], true );
 	openam_debug( 'getAttributesFromLegacyOpenAM: ATTRIBUTES RESPONSE: ' . print_r( $amResponse, true ) );
@@ -524,7 +538,7 @@ function openam_wp_logout() {
 			$url = OPENAM_BASE_URL . OPENAM_SESSION_URI . '?_action=logout';
 			$response = wp_remote_post( $url, array(
 				'headers'   => $headers,
-				'sslverify' => false,
+				'sslverify' => OPENAM_SSLVERIFY,
 			) );
 			openam_debug( 'wp_logout: RAW RESPONSE LOGOUT: ' . print_r( $response, true ) );
 			$expiration_date = time() - 3600;

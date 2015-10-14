@@ -41,6 +41,7 @@ function openam_settings_init() {
 	register_setting( 'openam_options', 'openam_do_redirect' );
 	register_setting( 'openam_options', 'openam_debug_enabled' );
 	register_setting( 'openam_options', 'openam_debug_file' );
+	register_setting( 'openam_options', 'openam_sslverify', 'openam_sslverify_sanitize_callback' );
 
 
 	/**
@@ -155,6 +156,14 @@ function openam_settings_init() {
 		'openam_openam_settings_section' 
 	);
 
+	add_settings_field( 
+		'openam_sslverify', 
+		__( 'Verify SSL/TLS certificate', 'openam-auth' ), 
+		'openam_sslverify_settings_field_render', 
+		'openam_options', 
+		'openam_openam_settings_section' 
+	);
+
 	/* WordPress Settings Fields */
 
 	add_settings_field( 
@@ -202,6 +211,24 @@ function openam_settings_init() {
 
 }
 
+
+/*
+ * Sanitation callbacks
+ */
+
+function openam_sslverify_sanitize_callback( $value ) {
+	if ( 'true' != $value ) {
+		$value = 'false';
+	}
+
+	return $value;
+}
+
+
+
+/*
+ * Render fields
+ */
 
 function openam_rest_enabled_settings_field_render() {
 	?>
@@ -320,6 +347,19 @@ function openam_service_chain_settings_field_render() {
 	</p>
 	<?php
 
+}
+
+function openam_sslverify_settings_field_render() {
+
+	?>
+	<label>
+		<input name="openam_sslverify" type="checkbox" id="openam_sslverify" value="true" <?php checked( 'true', get_option( 'openam_sslverify' ) ); ?>>
+		<?php esc_html_e( 'Enabled', 'openam-auth' ); ?>
+	</label>
+	<p class="description">
+		<?php esc_html_e( 'If the OpenAM server use a valid SSL/TLS certificate signed by a CA recognized by this server, you can enable verfication of the certificate for improved security.', 'openam-auth' ); ?>
+	</p>
+	<?php
 }
 
 
