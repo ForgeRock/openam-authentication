@@ -126,8 +126,8 @@ function openam_sso() {
 				openam_debug( 'openam_auth: am_response ' . print_r( $am_response, true ) );
 
 				$amAttributes = getAttributesFromOpenAM( $tokenId, $am_response[ OPENAM_WORDPRESS_ATTRIBUTES_USERNAME ], OPENAM_WORDPRESS_ATTRIBUTES );
-				$usernameAttr = get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_USERNAME );
-				$mailAttr = get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_MAIL );
+				$usernameAttr = openam_get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_USERNAME );
+				$mailAttr = openam_get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_MAIL );
 
 				openam_debug( 'openam_auth: UID: ' . print_r( $usernameAttr, true ) );
 				openam_debug( 'openam_auth: MAIL: ' . print_r( $mailAttr, true ) );
@@ -160,8 +160,8 @@ function openam_auth( $user, $username, $password ) {
 			} else {
 				$amAttributes = getAttributesFromOpenAM( $tokenId, $username, OPENAM_WORDPRESS_ATTRIBUTES );
 				if ( $amAttributes ) {
-					$usernameAttr = get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_USERNAME );
-					$mailAttr = get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_MAIL );
+					$usernameAttr = openam_get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_USERNAME );
+					$mailAttr = openam_get_attribute_value( $amAttributes, OPENAM_WORDPRESS_ATTRIBUTES_MAIL );
 					openam_debug( 'openam_auth: UID: ' . print_r( $usernameAttr, true ) );
 					openam_debug( 'openam_auth: MAIL: ' . print_r( $mailAttr, true ) );
 					$user = loadUser( $usernameAttr, $mailAttr );
@@ -571,7 +571,7 @@ function openam_debug( $message ) {
  * Select the attribute value :
  * if it's an array, we return the first value of it. if not, we directly return the attribute value
  */
-function get_attribute_value( $attributes, $attributeId ) {
+function openam_get_attribute_value( $attributes, $attributeId ) {
 	if( is_array( $attributes[$attributeId] ) ) {
 		return $attributes[ $attributeId ][0];
 	} else {
