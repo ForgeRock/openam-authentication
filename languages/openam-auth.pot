@@ -1,0 +1,231 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenAM Authentication\n"
+"POT-Creation-Date: 2015-10-14 14:11+0200\n"
+"PO-Revision-Date: 2015-06-09 12:21+0100\n"
+"Last-Translator: Bjørn Johansen <post@bjornjohansen.no>\n"
+"Language-Team: Bjørn Johansen <post@bjornjohansen.no>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: openam-rest.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: openam-rest.php:190
+msgid "The combination username/password was not correct"
+msgstr ""
+
+#: openam-rest.php:192
+msgid "Error when trying to reach the OpenAM"
+msgstr ""
+
+#: openam-settings.php:52
+msgid "API Settings"
+msgstr ""
+
+#: openam-settings.php:59
+msgid "Cookie Settings"
+msgstr ""
+
+#: openam-settings.php:66
+msgid "OpenAM Settings"
+msgstr ""
+
+#: openam-settings.php:73
+msgid "WordPress Settings"
+msgstr ""
+
+#: openam-settings.php:80
+msgid "Debugging"
+msgstr ""
+
+#: openam-settings.php:93
+msgid "OpenAM REST enabled"
+msgstr ""
+
+#: openam-settings.php:101
+msgid "OpenAM API Version"
+msgstr ""
+
+#: openam-settings.php:111
+msgid "OpenAM Session Cookie"
+msgstr ""
+
+#: openam-settings.php:119
+msgid "Cookie Domain"
+msgstr ""
+
+#: openam-settings.php:129
+msgid "OpenAM base URL"
+msgstr ""
+
+#: openam-settings.php:137
+msgid "OpenAM realm where users reside"
+msgstr ""
+
+#: openam-settings.php:145
+msgid "OpenAM Authentication Module"
+msgstr ""
+
+#: openam-settings.php:153
+msgid "OpenAM Authentication Service (Chain)"
+msgstr ""
+
+#: openam-settings.php:161
+msgid "Verify SSL/TLS certificate"
+msgstr ""
+
+#: openam-settings.php:171
+msgid "Logout from OpenAM when logging out from Wordpress"
+msgstr ""
+
+#: openam-settings.php:179
+msgid "OpenAM attributes to map Login Name and Mail address"
+msgstr ""
+
+#: openam-settings.php:187 openam-settings.php:399
+msgid "Redirect to OpenAM for Login"
+msgstr ""
+
+#: openam-settings.php:197 openam-settings.php:414
+msgid "Enable debug"
+msgstr ""
+
+#: openam-settings.php:205
+msgid "Debug File"
+msgstr ""
+
+#: openam-settings.php:237 openam-settings.php:357 openam-settings.php:371
+msgid "Enabled"
+msgstr ""
+
+#: openam-settings.php:240
+msgid "Enable or disable this plugin"
+msgstr ""
+
+#: openam-settings.php:257
+msgid ""
+"Please note that single sign on (SSO) only works with the legacy version. "
+"Single sign in (SSI) still works."
+msgstr ""
+
+#: openam-settings.php:260
+msgid "Legacy mode is selected. SSO is available."
+msgstr ""
+
+#: openam-settings.php:281
+#, php-format
+msgid ""
+"Default in OpenAM is %s, but can be something different. Check with the "
+"OpenAM Administrator"
+msgstr ""
+
+#: openam-settings.php:293
+msgid ""
+"The Domain where the above cookie will be set, once the user authenticates. "
+"Default is the last 2 components of the domain, if available, but can be "
+"something different. Depends on your deployment"
+msgstr ""
+
+#: openam-settings.php:305
+#, php-format
+msgid "The OpenAM deployment URL. Example: %s"
+msgstr ""
+
+#: openam-settings.php:317
+#, php-format
+msgid "The OpenAM realm where users reside. Example: %1$s or %2$s"
+msgstr ""
+
+#: openam-settings.php:329
+msgid "The Authentication module to use in the OpenAM. Example: %1$s or %2$"
+msgstr ""
+
+#: openam-settings.php:331
+msgid ""
+"Note: Module and Service Chain can not be used at the same time. This option "
+"can be left empty, in which case the default module configured in OpenAM wil "
+"be used.\n"
+"The module should only accept user and password, if that is not the case "
+"then enable “Redirect to OpenAM for Login”."
+msgstr ""
+
+#: openam-settings.php:344
+#, php-format
+msgid ""
+"The Authentication Service or Chain to be used in the OpenAM. Example: %1$s "
+"or %2$s"
+msgstr ""
+
+#: openam-settings.php:360
+msgid ""
+"If the OpenAM server use a valid SSL/TLS certificate signed by a CA "
+"recognized by this server, you can enable verfication of the certificate for "
+"improved security."
+msgstr ""
+
+#: openam-settings.php:374
+msgid ""
+"If selected, when the user logs out from Wordpress it will also terminate "
+"the session in OpenAM."
+msgstr ""
+
+#: openam-settings.php:386
+#, php-format
+msgid ""
+"Comma separated name of the OpenAM attributes to map login name and mail. "
+"Example: %s"
+msgstr ""
+
+#: openam-settings.php:402
+msgid ""
+"For authentication chains and modules with a more complex workflow than user/"
+"password, redirect to OpenAM"
+msgstr ""
+
+#: openam-settings.php:417
+msgid ""
+"Enables debug in the module. If enabled, the debug file must be specified. "
+"Remember to turn off in production environment"
+msgstr ""
+
+#: openam-settings.php:429
+msgid "Name of the debug file"
+msgstr ""
+
+#: openam-settings.php:466
+msgid "OpenAM REST Plugin Options"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "OpenAM Authentication"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://forgerock.org"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"This plugin is used to authenticate users using OpenAM. The plugin uses REST "
+"calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/"
+"users/ and /json/sessions. Therefore you need OpenAM 11.0 and above."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid ""
+"Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list "
+"firt)"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.forgerock.com"
+msgstr ""
