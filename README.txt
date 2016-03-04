@@ -1,10 +1,10 @@
 === OpenAM Authentication ===
-Contributors: forgerock1
+Contributors: forgerock1, forgerock, marius-g, qcastel
 Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9
 Requires at least: 3.9
 Tested up to: 4.1.0
-Stable tag: 1.2
+Stable tag: 1.3
 License: CDDLv1.0
 License URI: https://forgerock.org/cddlv1-0/
 
@@ -77,3 +77,8 @@ An option to enable debugging and specify the name of the debug file was introdu
 Added an option to specify the domain where the SSO cookie will be set.
 The uid and email address attribute name were hardcoded, now they are properly done.
 Change a little bit the Options (Settings) page
+= 1.3 =
+Enhancements to comply more with WordPress (SSO, Logout, codestyle, etc)
+I18n (Transaltions are welcome)
+Cookie Domain default option changed (Please learn about cookies and domains!)
+Debugging enhancements

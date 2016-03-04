@@ -97,3 +97,9 @@ Updated user access to use roles and not levels
 <dd>The uid and email address attribute name were hardcoded, now they are properly done.
 <dd>Change a little bit the Options (Settings) page
 </dl>
+<dt>
+1.3
+<dd>Enhancements to comply more with WordPress (SSO, Logout, codestyle, etc)
+<dd>I18n (Transaltions are welcome)
+<dd>Cookie Domain default option changed (Please learn about cookies and domains!)
+<dd>Debugging enhancements

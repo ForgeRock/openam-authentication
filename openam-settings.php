@@ -12,7 +12,7 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2015 ForgeRock AS.
+ * Copyright 2015-2016 ForgeRock AS.
  */
 
 defined( 'ABSPATH' ) or die();
@@ -254,7 +254,7 @@ function openam_api_version_settings_field_render() {
 	</select>
 	
 	<p class="description" style="<?php if ( '1.0' != $openam_api_version ) { echo 'display:none;'; } ?>" data-openam-api-version="1.0">
-		<?php esc_html_e( 'Please note that single sign on (SSO) only works with the legacy version. Single sign in (SSI) still works.', 'openam-auth' ); ?>
+		<?php esc_html_e( 'Notice that legacy versions of the OpenAM API will be deprecated in the short future', 'openam-auth' ); ?>
 	</p>
 	<p class="description" style="<?php if ( 'legacy' != $openam_api_version ) { echo 'display:none;'; } ?>" data-openam-api-version='legacy'>
 		<?php esc_html_e( 'Legacy mode is selected. SSO is available.', 'openam-auth' ); ?>
@@ -290,7 +290,7 @@ function openam_cookie_domain_settings_field_render() {
 	?>
 	<input type="text" name="openam_cookie_domain" value="<?php echo esc_attr( get_option( 'openam_cookie_domain' ) ); ?>" class="regular-text code">
 	<p class="description">
-		<?php esc_html_e( 'The Domain where the above cookie will be set, once the user authenticates. Default is the last 2 components of the domain, if available, but can be something different. Depends on your deployment', 'openam-auth' ); ?>
+		<?php esc_html_e( 'The Domain where the above cookie will be set, once the user authenticates. Default is the last 2 components of the domain, if available, but can be something different. Depends on your deployment, for SSO to work properly you should check with your OpenAM admin to see you are using the same domain that OpenAM sets the cookie for', 'openam-auth' ); ?>
 	</p>
 	<?php
 
