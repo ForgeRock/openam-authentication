@@ -39,6 +39,7 @@ function openam_settings_init() {
 	register_setting( 'openam_options', 'openam_logout_too' );
 	register_setting( 'openam_options', 'openam_wordpress_attributes' );
 	register_setting( 'openam_options', 'openam_do_redirect' );
+	register_setting( 'openam_options', 'openam_success_redirect' );
 	register_setting( 'openam_options', 'openam_debug_enabled' );
 	register_setting( 'openam_options', 'openam_debug_file' );
 	register_setting( 'openam_options', 'openam_sslverify', 'openam_sslverify_sanitize_callback' );
@@ -190,6 +191,14 @@ function openam_settings_init() {
 		'openam_wordpress_settings_section' 
 	);
 
+	add_settings_field( 
+		'openam_success_redirect', 
+		__( 'Page to go after OpenAM Successful login', 'openam-auth' ), 
+		'openam_success_redirect_settings_field_render', 
+		'openam_options', 
+		'openam_wordpress_settings_section' 
+	);
+
 	/* Debugging Settings Fields */
 
 	add_settings_field( 
@@ -290,7 +299,7 @@ function openam_cookie_domain_settings_field_render() {
 	?>
 	<input type="text" name="openam_cookie_domain" value="<?php echo esc_attr( get_option( 'openam_cookie_domain' ) ); ?>" class="regular-text code">
 	<p class="description">
-		<?php esc_html_e( 'The Domain where the above cookie will be set, once the user authenticates. Default is the last 2 components of the domain, if available, but can be something different. Depends on your deployment, for SSO to work properly you should check with your OpenAM admin to see you are using the same domain that OpenAM sets the cookie for', 'openam-auth' ); ?>
+		<?php esc_html_e( 'The Domain where the above cookie will be set, once the user authenticates. The default is the host server name, but it can be the domain component. It REALLY depends on your deployment, for SSO to WORK PROPERLY you should check with your OpenAM admininstrator. If you do not understand cookies and domains check with the OpenAM Administrator.', 'openam-auth' ); ?>
 	</p>
 	<?php
 
@@ -396,7 +405,7 @@ function openam_do_redirect_settings_field_render() {
 	?>
 	<label>
 		<input name="openam_do_redirect" type="checkbox" id="openam_do_redirect" value="1" <?php checked( '1', get_option( 'openam_do_redirect' ) ); ?>>
-		<?php esc_html_e( 'Redirect to OpenAM for Login', 'openam-auth' ); ?>
+                <?php esc_html_e( 'Redirect to OpenAM for Login', 'openam-auth' ); ?>
 	</label>
 	<p class="description">
 		<?php esc_html_e( 'For authentication chains and modules with a more complex workflow than user/password, redirect to OpenAM', 'openam-auth' ); ?>
@@ -405,6 +414,20 @@ function openam_do_redirect_settings_field_render() {
 
 }
 
+function openam_success_redirect_settings_field_render() {
+
+	$options = get_option( 'openam_settings' );
+	?>
+
+	<label>
+		<input name="openam_success_redirect" type="text" id="openam_success_redirect" value="<?php echo esc_attr( get_option( 'openam_success_redirect' ) ); ?>" class="regular-text code" />
+	</label>
+	<p class="description">
+		<?php esc_html_e( 'If Redirect to OpenAM was enabled, then this is the page to redirect back after a successful login in OpenAM', 'openam-auth' ); ?>
+	</p>
+	<?php
+
+}
 
 function openam_debug_enabled_settings_field_render() {
 
@@ -475,4 +498,3 @@ function openam_options_page() {
 	<?php
 
 }
-
