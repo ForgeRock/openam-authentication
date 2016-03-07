@@ -10,7 +10,7 @@ Wordpress plugin to authenticate using OpenAM
 <tr><td>Tested up to:</td><td>4.4.2</td></tr>
 <tr><td>Stable tag:</td><td>1.4</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
-<tr><td>License URL</td><td>http://forgerock.org/projects/cddlv1-0/</td></tr>
+<tr><td>License URL</td><td>http://forgerock.org/cddlv1-0/</td></tr>
 </table>
 <br/>
 <b>Description</b>
