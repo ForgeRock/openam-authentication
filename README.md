@@ -3,12 +3,12 @@
 Wordpress plugin to authenticate using OpenAM
 <b>OpenAM Authentication</b>
 <table border="0">
-<tr><td>Contributors:</td><td>forgerock1,forgerock,marius-g,qcastel</td></tr>
+<tr><td>Contributors:</td><td>forgerock1, forgerock, marius-g, qcastel, bjornjohansen</td></tr>
 <tr><td>Link:</td><td> http://www.forgerock.org/</td></tr>
-<tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, OpenAM 13.0,  Wordpress 3.9</td></tr>
+<tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9 & 4.4.2</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
-<tr><td>Tested up to:</td><td>4.1.0</td></tr>
-<tr><td>Stable tag:</td><td>1.3</td></tr>
+<tr><td>Tested up to:</td><td>4.4.2</td></tr>
+<tr><td>Stable tag:</td><td>1.4</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
 <tr><td>License URL</td><td>http://forgerock.org/projects/cddlv1-0/</td></tr>
 </table>
@@ -21,7 +21,7 @@ Integrate Wordpress Authentication with OpenAM. Authenticates directly from the 
 <b>Contributing</b>
 <br/>
 The easiest way to contribute to this plugin is to submit a GitHub pull request. Here's the repo:
-https://github.com/forgerock1/openam-authentication
+https://github.com/forgerock/openam-authentication
 <br/>
 
 <b>Installation</b>
@@ -40,7 +40,7 @@ What is it needed to make this plug-in work
 <ol>
 <li>An OpenAM server up and running. It can be installed anywhere, as long as Wordpress can reach it. The OpenAM requires certain REST APIs, hence OpenAM 10.X and above is required.
 <li> For versions of OpenAM 11.0 and older, the Legacy API mode will need to be enabled in the plugin
-<li>Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2 and 4.0.0 but it might work with previous versions.
+<li>Your wordpress installation up and running. This plug-in was written and tested for Wordpress 3.9.2 up to 4.4.2 but it might work with previous versions.
 </ol>
 <dt>
 Do I need an OpenAM Policy Agent?
@@ -54,6 +54,7 @@ Redirection is optional and it is configurable from the settings page.  Redirect
 <dt>
 How does it implement SSO with OpenAM?
 <dd>It looks for a session cookie in the domain where the WordPress is installed, if there is no such session cookie, then it will require to authenticate.  If the cookie is found with a session pointer valid, then the plugin will authenticate automatically to WordPress.
+A proper cookie domain setting is necessary for SSO to work. You need to check with your OpenAM Administrator what domain is used to set the session cookie.
 <dd>
 Once the authentication has taken place, it will set the session in the cookie that you have configured in the plug-in (this is usually the same cookie as the one the OpenAM is using). 
 
@@ -61,7 +62,7 @@ Once the authentication has taken place, it will set the session in the cookie t
 <dd>Logging-out from OpenAM is optional. It is configurable by the administrator.
 <dt>
 Why did you write this plug-in?
-<dd>We have implemented this plugin keeping in mind that the latest plugins are obosolete and were written for OpenSSO. They have not evolved, hence have become obsolete or unusable with the newest version of Wordpress. Also this plugin takes advantage of the REST interface in OpenAM and makes it lightweight.  
+<dd>We have implemented this plugin keeping in mind that the latest plugins are obsolete and were written for OpenSSO. They have not evolved, hence have become obsolete or unusable with the newest version of Wordpress. Also this plugin takes advantage of the REST interface in OpenAM and makes it lightweight.  
 </dl>
 <br>
 <b>Screenshots</b>
@@ -102,5 +103,8 @@ Updated user access to use roles and not levels
 <dd>I18n (Transaltions are welcome)
 <dd>Cookie Domain default option changed (Please learn about cookies and domains!)
 <dd>Debugging enhancements
+<dt>
+1.4
+<dd>New option to indicate what page to return in WordPress after successful OpenAM Login, when OpenAM Redirect has been enabled.
+<dd>Cookie Domain default option fixed. The default now appears without the port component
 </dl>
-
