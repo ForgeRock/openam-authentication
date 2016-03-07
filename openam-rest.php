@@ -3,7 +3,7 @@
 Plugin Name: OpenAM Authentication
 Plugin URI: https://forgerock.org
 Description: This plugin is used to authenticate users using OpenAM. The plugin uses REST calls to the OpenAM. The required REST APIs are: /json/authenticate; /json/users/ and /json/sessions. Therefore you need OpenAM 11.0 and above. This plugin is not supported officially by ForgeRock.
-Version: 1.3
+Version: 1.4
 Author: Victor info@forgerock.com, openam@forgerock.org (subscribe to mailing list firt)
 Author URI: http://www.forgerock.org
 Text Domain: openam-auth
@@ -27,7 +27,7 @@ Text Domain: openam-auth
 
 defined( 'ABSPATH' ) or die();
 
-define( 'OPENAM_PLUGIN_VERSION', '1.3' );
+define( 'OPENAM_PLUGIN_VERSION', '1.4' );
 
 include 'openam-settings.php';
 include 'plugin-update.php';
@@ -49,7 +49,7 @@ function openam_plugin_activate() {
 	add_option( 'openam_rest_enabled',                 0 );
 	add_option( 'openam_api_version',                  '1.0' );
 	add_option( 'openam_cookie_name',                  'iPlanetDirectoryPro' );
-	add_option( 'openam_cookie_domain',                sanitize_file_name( $_SERVER['HTTP_HOST'] ) );
+	add_option( 'openam_cookie_domain',                sanitize_file_name( substr( $_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':') ) ) );
 	add_option( 'openam_base_url',                     'https://openam.example.com:443/openam' );
 	add_option( 'openam_realm',                        '' );
 	add_option( 'openam_authn_module',                 '' );
@@ -57,6 +57,7 @@ function openam_plugin_activate() {
 	add_option( 'openam_logout_too',                   0 );
 	add_option( 'openam_wordpress_attributes',         'uid,mail' );
 	add_option( 'openam_do_redirect',                  0 );
+	add_option( 'openam_success_redirect', 		   home_url() );
 	add_option( 'openam_debug_enabled',                0 );
 
 	add_option( 'openam_sslverify',                    'false' );
@@ -84,6 +85,7 @@ function openam_setup_constants() {
 	define( 'OPENAM_WORDPRESS_ATTRIBUTES_USERNAME',     $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[0] );
 	define( 'OPENAM_WORDPRESS_ATTRIBUTES_MAIL',         $OPENAM_WORDPRESS_ATTRIBUTES_ARRAY[1] );
 	define( 'OPENAM_LOGOUT_TOO',                        get_option( 'openam_logout_too' ) );
+	define( 'OPENAM_SUCCESS_REDIRECT',                  get_option( 'openam_success_redirect' ) );
 	define( 'OPENAM_DO_REDIRECT',                       get_option( 'openam_do_redirect' ) );
 	define( 'OPENAM_DEBUG_ENABLED',                     get_option( 'openam_debug_enabled' ) );
 	define( 'OPENAM_DEBUG_FILE',                        get_option( 'openam_debug_file' ) );
@@ -115,7 +117,8 @@ function openam_sso() {
 	if ( ( isset( $_GET['action'] ) && 'logout' == $_GET['action'] ) || ( isset( $_GET['loggedout'] ) && 'yes' == $_GET['loggedout'] ) ) {
 		return;
 	}
-	// Let's see if the user is already logged in the IDP
+	// Let's see if the user is already logged in the IDP.
+        // Notice that the OPENAM_COOKIE_NAME Will be accessible for this plugin only if the OpenAM and Wordpress are in the SAME DOMAIN!
 	if ( isset( $_COOKIE[ OPENAM_COOKIE_NAME ] ) ) {
 		$tokenId = $_COOKIE[ OPENAM_COOKIE_NAME ];
 		if ( ! empty( $tokenId ) && ! is_user_logged_in() ) {
@@ -542,14 +545,16 @@ function createOpenAMLoginURL() {
 }
 
 function openam_login_url( $login_url, $redirect = null ) {
+	openam_debug('openam_login_url: The current login URL is: ' . $login_url);
+	
 	if ( OPENAM_DO_REDIRECT ) {
 		$new_url = createOpenAMLoginURL();
 		if ( ! stripos( $new_url, '?' ) ) {
-			$new_url .= '?' . 'goto=' . urlencode( $login_url );
+			$new_url .= '?' . 'goto=' . urlencode( OPENAM_SUCCESS_REDIRECT );
 		} else {
-			$new_url .= '&' . 'goto=' . urlencode( $login_url );
+			$new_url .= '&' . 'goto=' . urlencode( OPENAM_SUCCESS_REDIRECT );
 		}
-
+		openam_debug('openam_login_url: New Login URL is: ' . $new_url);
 		return $new_url;
 	} else {
 		return $login_url;
