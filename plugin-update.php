@@ -27,6 +27,10 @@ function openam_maybe_update() {
 		if ( -1 == version_compare( $registered_version, '1.3' ) ) {
 			openam_update_to_1_3();
 		}
+                
+                if ( -1 == version_compare( $registered_version, '1.4' ) ) {
+			openam_update_to_1_4();
+		}
 
 		update_option( 'openam_plugin_version', OPENAM_PLUGIN_VERSION );
 	}
@@ -45,3 +49,6 @@ function openam_update_to_1_3() {
 	}
 }
 
+function openam_update_to_1_4() {        
+	update_option( 'openam_success_redirect', home_url() );
+}
