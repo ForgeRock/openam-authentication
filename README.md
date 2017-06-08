@@ -1,9 +1,9 @@
 # openam-authentication plugin
 
-##Warning
+## Warning
 **This code is not supported by ForgeRock and it is your responsibility to verify that the software is suitable and safe for use.**
 
-##About
+## About
 
 Wordpress plugin to authenticate using OpenAM
 <b>OpenAM Authentication</b>
