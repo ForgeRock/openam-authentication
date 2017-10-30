@@ -141,7 +141,7 @@ function openam_sso() {
 				// Log in the user
 				wp_set_current_user( $user->ID, $user->user_login );
 				wp_set_auth_cookie( $user->ID );
-				do_action( 'wp_login', $user->user_login );
+				do_action( 'wp_login', $user->user_login, $user );
 			}
 		}
 	}
