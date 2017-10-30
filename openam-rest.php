@@ -22,7 +22,7 @@ Text Domain: openam-auth
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2014-2017 ForgeRock AS.
+ * Copyright 2014-2016 ForgeRock AS.
  */
 
 defined( 'ABSPATH' ) or die();
@@ -120,7 +120,7 @@ function openam_sso() {
 	// Let's see if the user is already logged in the IDP.
         // Notice that the OPENAM_COOKIE_NAME Will be accessible for this plugin only if the OpenAM and Wordpress are in the SAME DOMAIN!
 	if ( isset( $_COOKIE[ OPENAM_COOKIE_NAME ] ) ) {
-		$tokenId = trim($_COOKIE[ OPENAM_COOKIE_NAME ],  '"');
+		$tokenId = trim($_COOKIE[ OPENAM_COOKIE_NAME ], '"');
 		if ( ! empty( $tokenId ) && ! is_user_logged_in() ) {
 			openam_debug( 'openam_auth: TOKENID:' . $tokenId );
 			if ( $am_response = openam_sessionsdata( $tokenId ) ) {
@@ -232,7 +232,7 @@ function openam_sessionsdata( $tokenId ) {
 }
 
 
-/* Loads a user if found, if not it creates it in the local database using the
+/* Loads a user if found, if not it creates it in the local database using the 
  * attributes pulled from OpenaM
  */
 function loadUser( $login, $mail ) {
@@ -546,7 +546,7 @@ function createOpenAMLoginURL() {
 
 function openam_login_url( $login_url, $redirect = null ) {
 	openam_debug('openam_login_url: The current login URL is: ' . $login_url);
-
+	
 	if ( OPENAM_DO_REDIRECT ) {
 		$new_url = createOpenAMLoginURL();
 		if ( ! stripos( $new_url, '?' ) ) {
@@ -561,8 +561,8 @@ function openam_login_url( $login_url, $redirect = null ) {
 	}
 }
 
-/* Writes to the debug file if debugging has been enabled
- *
+/* Writes to the debug file if debugging has been enabled 
+ * 
  */
 function openam_debug( $message ) {
 	if ( OPENAM_DEBUG_ENABLED ) {
@@ -591,3 +591,5 @@ function openam_get_attribute_value( $attributes, $attributeId ) {
 function openam_i18n() {
 	load_plugin_textdomain( 'openam-auth', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
+
+
