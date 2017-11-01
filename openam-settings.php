@@ -12,7 +12,7 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2015-2016 ForgeRock AS.
+ * Copyright 2015-2017 ForgeRock AS.
  */
 
 defined( 'ABSPATH' ) or die();
@@ -49,37 +49,37 @@ function openam_settings_init() {
 	 * Sections
 	 */
 	add_settings_section(
-		'openam_api_settings_section', 
-		__( 'API Settings', 'openam-auth' ), 
-		'openam_settings_section_api_callback', 
+		'openam_api_settings_section',
+		__( 'API Settings', 'openam-auth' ),
+		'openam_settings_section_api_callback',
 		'openam_options'
 	);
 
 	add_settings_section(
-		'openam_cookies_settings_section', 
-		__( 'Cookie Settings', 'openam-auth' ), 
-		'openam_settings_section_cookies_callback', 
+		'openam_cookies_settings_section',
+		__( 'Cookie Settings', 'openam-auth' ),
+		'openam_settings_section_cookies_callback',
 		'openam_options'
 	);
 
 	add_settings_section(
-		'openam_openam_settings_section', 
-		__( 'OpenAM Settings', 'openam-auth' ), 
-		'openam_settings_section_openam_callback', 
+		'openam_openam_settings_section',
+		__( 'OpenAM Settings', 'openam-auth' ),
+		'openam_settings_section_openam_callback',
 		'openam_options'
 	);
 
 	add_settings_section(
-		'openam_wordpress_settings_section', 
-		__( 'WordPress Settings', 'openam-auth' ), 
-		'openam_settings_section_wordpress_callback', 
+		'openam_wordpress_settings_section',
+		__( 'WordPress Settings', 'openam-auth' ),
+		'openam_settings_section_wordpress_callback',
 		'openam_options'
 	);
 
 	add_settings_section(
-		'openam_debug_settings_section', 
-		__( 'Debugging', 'openam-auth' ), 
-		'openam_settings_section_debugging_callback', 
+		'openam_debug_settings_section',
+		__( 'Debugging', 'openam-auth' ),
+		'openam_settings_section_debugging_callback',
 		'openam_options'
 	);
 
@@ -89,132 +89,132 @@ function openam_settings_init() {
 
 	/* API Settings Fields */
 
-	add_settings_field( 
-		'openam_rest_enabled', 
-		__( 'OpenAM REST enabled', 'openam-auth' ), 
-		'openam_rest_enabled_settings_field_render', 
-		'openam_options', 
-		'openam_api_settings_section' 
+	add_settings_field(
+		'openam_rest_enabled',
+		__( 'OpenAM REST enabled', 'openam-auth' ),
+		'openam_rest_enabled_settings_field_render',
+		'openam_options',
+		'openam_api_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_api_version', 
-		__( 'OpenAM API Version', 'openam-auth' ), 
-		'openam_api_version_settings_field_render', 
-		'openam_options', 
-		'openam_api_settings_section' 
+	add_settings_field(
+		'openam_api_version',
+		__( 'OpenAM API Version', 'openam-auth' ),
+		'openam_api_version_settings_field_render',
+		'openam_options',
+		'openam_api_settings_section'
 	);
 
 	/* Cookie Settings Fields */
 
-	add_settings_field( 
-		'openam_cookie_name', 
-		__( 'OpenAM Session Cookie', 'openam-auth' ), 
-		'openam_cookie_name_settings_field_render', 
-		'openam_options', 
-		'openam_cookies_settings_section' 
+	add_settings_field(
+		'openam_cookie_name',
+		__( 'OpenAM Session Cookie', 'openam-auth' ),
+		'openam_cookie_name_settings_field_render',
+		'openam_options',
+		'openam_cookies_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_cookie_domain', 
-		__( 'Cookie Domain', 'openam-auth' ), 
-		'openam_cookie_domain_settings_field_render', 
-		'openam_options', 
-		'openam_cookies_settings_section' 
+	add_settings_field(
+		'openam_cookie_domain',
+		__( 'Cookie Domain', 'openam-auth' ),
+		'openam_cookie_domain_settings_field_render',
+		'openam_options',
+		'openam_cookies_settings_section'
 	);
 
 	/* OpenAM Settings Fields */
 
-	add_settings_field( 
-		'openam_base_url', 
-		__( 'OpenAM base URL', 'openam-auth' ), 
-		'openam_base_url_settings_field_render', 
-		'openam_options', 
-		'openam_openam_settings_section' 
+	add_settings_field(
+		'openam_base_url',
+		__( 'OpenAM base URL', 'openam-auth' ),
+		'openam_base_url_settings_field_render',
+		'openam_options',
+		'openam_openam_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_realm', 
-		__( 'OpenAM realm where users reside', 'openam-auth' ), 
-		'openam_realm_settings_field_render', 
-		'openam_options', 
-		'openam_openam_settings_section' 
+	add_settings_field(
+		'openam_realm',
+		__( 'OpenAM realm where users reside', 'openam-auth' ),
+		'openam_realm_settings_field_render',
+		'openam_options',
+		'openam_openam_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_authn_module', 
-		__( 'OpenAM Authentication Module', 'openam-auth' ), 
-		'openam_authn_module_settings_field_render', 
-		'openam_options', 
-		'openam_openam_settings_section' 
+	add_settings_field(
+		'openam_authn_module',
+		__( 'OpenAM Authentication Module', 'openam-auth' ),
+		'openam_authn_module_settings_field_render',
+		'openam_options',
+		'openam_openam_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_service_chain', 
-		__( 'OpenAM Authentication Service (Chain)', 'openam-auth' ), 
-		'openam_service_chain_settings_field_render', 
-		'openam_options', 
-		'openam_openam_settings_section' 
+	add_settings_field(
+		'openam_service_chain',
+		__( 'OpenAM Authentication Service (Chain)', 'openam-auth' ),
+		'openam_service_chain_settings_field_render',
+		'openam_options',
+		'openam_openam_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_sslverify', 
-		__( 'Verify SSL/TLS certificate', 'openam-auth' ), 
-		'openam_sslverify_settings_field_render', 
-		'openam_options', 
-		'openam_openam_settings_section' 
+	add_settings_field(
+		'openam_sslverify',
+		__( 'Verify SSL/TLS certificate', 'openam-auth' ),
+		'openam_sslverify_settings_field_render',
+		'openam_options',
+		'openam_openam_settings_section'
 	);
 
 	/* WordPress Settings Fields */
 
-	add_settings_field( 
-		'openam_logout_too', 
-		__( 'Logout from OpenAM when logging out from Wordpress', 'openam-auth' ), 
-		'openam_logout_too_settings_field_render', 
-		'openam_options', 
-		'openam_wordpress_settings_section' 
+	add_settings_field(
+		'openam_logout_too',
+		__( 'Logout from OpenAM when logging out from Wordpress', 'openam-auth' ),
+		'openam_logout_too_settings_field_render',
+		'openam_options',
+		'openam_wordpress_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_wordpress_attributes', 
-		__( 'OpenAM attributes to map Login Name and Mail address', 'openam-auth' ), 
-		'openam_wordpress_attributes_settings_field_render', 
-		'openam_options', 
-		'openam_wordpress_settings_section' 
+	add_settings_field(
+		'openam_wordpress_attributes',
+		__( 'OpenAM attributes to map Login Name and Mail address', 'openam-auth' ),
+		'openam_wordpress_attributes_settings_field_render',
+		'openam_options',
+		'openam_wordpress_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_do_redirect', 
-		__( 'Redirect to OpenAM for Login', 'openam-auth' ), 
-		'openam_do_redirect_settings_field_render', 
-		'openam_options', 
-		'openam_wordpress_settings_section' 
+	add_settings_field(
+		'openam_do_redirect',
+		__( 'Redirect to OpenAM for Login', 'openam-auth' ),
+		'openam_do_redirect_settings_field_render',
+		'openam_options',
+		'openam_wordpress_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_success_redirect', 
-		__( 'Page to go after OpenAM Successful login', 'openam-auth' ), 
-		'openam_success_redirect_settings_field_render', 
-		'openam_options', 
-		'openam_wordpress_settings_section' 
+	add_settings_field(
+		'openam_success_redirect',
+		__( 'Page to go after OpenAM Successful login', 'openam-auth' ),
+		'openam_success_redirect_settings_field_render',
+		'openam_options',
+		'openam_wordpress_settings_section'
 	);
 
 	/* Debugging Settings Fields */
 
-	add_settings_field( 
-		'openam_debug_enabled', 
-		__( 'Enable debug', 'openam-auth' ), 
-		'openam_debug_enabled_settings_field_render', 
-		'openam_options', 
-		'openam_debug_settings_section' 
+	add_settings_field(
+		'openam_debug_enabled',
+		__( 'Enable debug', 'openam-auth' ),
+		'openam_debug_enabled_settings_field_render',
+		'openam_options',
+		'openam_debug_settings_section'
 	);
 
-	add_settings_field( 
-		'openam_debug_file', 
-		__( 'Debug File', 'openam-auth' ), 
-		'openam_debug_file_settings_field_render', 
-		'openam_options', 
-		'openam_debug_settings_section' 
+	add_settings_field(
+		'openam_debug_file',
+		__( 'Debug File', 'openam-auth' ),
+		'openam_debug_file_settings_field_render',
+		'openam_options',
+		'openam_debug_settings_section'
 	);
 
 
@@ -261,7 +261,7 @@ function openam_api_version_settings_field_render() {
 		<option value="1.0" <?php selected( '1.0', $openam_api_version ); ?>>1.0 (OpenAM 12 and 13)</option>
 		<option value="legacy" <?php selected( 'legacy', $openam_api_version ); ?>>Legacy (OpenAM 9, 10 and 11)</option>
 	</select>
-	
+
 	<p class="description" style="<?php if ( '1.0' != $openam_api_version ) { echo 'display:none;'; } ?>" data-openam-api-version="1.0">
 		<?php esc_html_e( 'Notice that legacy versions of the OpenAM API will be deprecated in the short future', 'openam-auth' ); ?>
 	</p>
@@ -485,15 +485,15 @@ function openam_options_page() {
 
 	?>
 	<form action='options.php' method='post'>
-		
+
 		<h2><?php esc_html_e( 'OpenAM REST Plugin Options', 'openam-auth' ); ?></h2>
-		
+
 		<?php
 		settings_fields( 'openam_options' );
 		do_settings_sections( 'openam_options' );
 		submit_button();
 		?>
-		
+
 	</form>
 	<?php
 

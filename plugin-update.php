@@ -12,7 +12,7 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2016 ForgeRock AS.
+ * Copyright 2017 ForgeRock AS.
  */
 
 defined( 'ABSPATH' ) or die();
@@ -27,8 +27,12 @@ function openam_maybe_update() {
 		if ( -1 == version_compare( $registered_version, '1.3' ) ) {
 			openam_update_to_1_3();
 		}
-                
-                if ( -1 == version_compare( $registered_version, '1.4' ) ) {
+
+    if ( -1 == version_compare( $registered_version, '1.4' ) ) {
+			openam_update_to_1_4();
+		}
+
+		if ( -1 == version_compare( $registered_version, '1.5' ) ) {
 			openam_update_to_1_4();
 		}
 
@@ -49,6 +53,6 @@ function openam_update_to_1_3() {
 	}
 }
 
-function openam_update_to_1_4() {        
+function openam_update_to_1_4() {
 	update_option( 'openam_success_redirect', home_url() );
 }

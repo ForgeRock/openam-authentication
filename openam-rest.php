@@ -22,7 +22,7 @@ Text Domain: openam-auth
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2014-2016 ForgeRock AS.
+ * Copyright 2014-2017 ForgeRock AS.
  */
 
 defined( 'ABSPATH' ) or die();
@@ -232,7 +232,7 @@ function openam_sessionsdata( $tokenId ) {
 }
 
 
-/* Loads a user if found, if not it creates it in the local database using the 
+/* Loads a user if found, if not it creates it in the local database using the
  * attributes pulled from OpenaM
  */
 function loadUser( $login, $mail ) {
@@ -546,7 +546,7 @@ function createOpenAMLoginURL() {
 
 function openam_login_url( $login_url, $redirect = null ) {
 	openam_debug('openam_login_url: The current login URL is: ' . $login_url);
-	
+
 	if ( OPENAM_DO_REDIRECT ) {
 		$new_url = createOpenAMLoginURL();
 		if ( ! stripos( $new_url, '?' ) ) {
@@ -561,8 +561,8 @@ function openam_login_url( $login_url, $redirect = null ) {
 	}
 }
 
-/* Writes to the debug file if debugging has been enabled 
- * 
+/* Writes to the debug file if debugging has been enabled
+ *
  */
 function openam_debug( $message ) {
 	if ( OPENAM_DEBUG_ENABLED ) {
@@ -591,5 +591,3 @@ function openam_get_attribute_value( $attributes, $attributeId ) {
 function openam_i18n() {
 	load_plugin_textdomain( 'openam-auth', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
-
-
