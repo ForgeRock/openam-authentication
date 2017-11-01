@@ -4,7 +4,7 @@ Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, OpenAM 13.0, Wordpress 3.9 & 4.4.2
 Requires at least: 3.9
 Tested up to: 4.4.2
-Stable tag: 1.4
+Stable tag: 1.5
 License: CDDLv1.0
 License URI: https://forgerock.org/cddlv1-0/
 
@@ -43,13 +43,13 @@ Redirection is optional and it is configurable from the settings page.  Redirect
 It looks for a session cookie in the domain where the WordPress is installed, if there is no such session cookie, then it will require to authenticate.  If the cookie is found with a session pointer valid, then the plugin will authenticate automatically to WordPress.
 A proper cookie domain setting is necessary for SSO to work. You need to check with your OpenAM Administrator what domain is used to set the session cookie.
 
-Once the authentication has taken place, it will set the session in the cookie that you have configured in the plug-in (this is usually the same cookie as the one the OpenAM is using). 
+Once the authentication has taken place, it will set the session in the cookie that you have configured in the plug-in (this is usually the same cookie as the one the OpenAM is using).
 
 = Does the plug-in logs me out from OpenAM when I logout from Wordpress? =
 Logging-out from OpenAM is optional. It is configurable by the administrator.
 
 = Why did you write this plug-in? =
-We have implemented this plugin keeping in mind that the latest plugins are obsolete and were written for OpenSSO. They have not evolved, hence have become obsolete or unusable with the newest version of Wordpress. Also this plugin takes advantage of the REST interface in OpenAM and makes it lightweight.  
+We have implemented this plugin keeping in mind that the latest plugins are obsolete and were written for OpenSSO. They have not evolved, hence have become obsolete or unusable with the newest version of Wordpress. Also this plugin takes advantage of the REST interface in OpenAM and makes it lightweight.
 
 == Screenshots ==
 
@@ -60,9 +60,9 @@ We have implemented this plugin keeping in mind that the latest plugins are obso
 * Initial drop
 
 = 0.6 =
-* A more advanced version than the initial drop. 
+* A more advanced version than the initial drop.
 * Realm, Module, Service Chain are supported
-* Supports also redirect to OpenAM, if needed. 
+* Supports also redirect to OpenAM, if needed.
 * Optional global logout configurable
 = 0.9 =
 Clean some debug statements and updated the README
@@ -86,3 +86,5 @@ Updated user access to use roles and not levels
 = 1.4 =
 * New option to indicate what page to return in WordPress after successful OpenAM Login, when OpenAM Redirect has been enabled.
 * Cookie Domain default option fixed. The default now appears without the port component
+= 1.5 =
+* Fixes compatibility with OpenAM 5.X

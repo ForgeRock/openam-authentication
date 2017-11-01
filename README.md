@@ -8,12 +8,12 @@
 Wordpress plugin to authenticate using OpenAM
 <b>OpenAM Authentication</b>
 <table border="0">
-<tr><td>Contributors:</td><td>forgerock1, forgerock, marius-g, qcastel, bjornjohansen</td></tr>
+<tr><td>Contributors:</td><td>forgerock1, forgerock, marius-g, qcastel, bjornjohansen, degerstrom, vscheuber</td></tr>
 <tr><td>Link:</td><td> http://www.forgerock.org/</td></tr>
 <tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9 & 4.4.2</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
 <tr><td>Tested up to:</td><td>4.4.2</td></tr>
-<tr><td>Stable tag:</td><td>1.4</td></tr>
+<tr><td>Stable tag:</td><td>1.5</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
 <tr><td>License URL</td><td>http://forgerock.org/cddlv1-0/</td></tr>
 </table>
@@ -61,7 +61,7 @@ How does it implement SSO with OpenAM?
 <dd>It looks for a session cookie in the domain where the WordPress is installed, if there is no such session cookie, then it will require to authenticate.  If the cookie is found with a session pointer valid, then the plugin will authenticate automatically to WordPress.
 A proper cookie domain setting is necessary for SSO to work. You need to check with your OpenAM Administrator what domain is used to set the session cookie.
 <dd>
-Once the authentication has taken place, it will set the session in the cookie that you have configured in the plug-in (this is usually the same cookie as the one the OpenAM is using). 
+Once the authentication has taken place, it will set the session in the cookie that you have configured in the plug-in (this is usually the same cookie as the one the OpenAM is using).
 
 <dt>Does the plug-in logs me out from OpenAM when I logout from Wordpress?
 <dd>Logging-out from OpenAM is optional. It is configurable by the administrator.
@@ -79,9 +79,9 @@ Why did you write this plug-in?
 <dd>Initial drop
 <dt>
 0.6
-<dd>A more advanced version than the initial drop. 
+<dd>A more advanced version than the initial drop.
 <dd>Realm, Module, Service Chain are supported
-<dd>Supports also redirect to OpenAM, if needed. 
+<dd>Supports also redirect to OpenAM, if needed.
 <dd>Optional global logout configurable
 <dt>
 0.9
@@ -112,4 +112,7 @@ Updated user access to use roles and not levels
 1.4
 <dd>New option to indicate what page to return in WordPress after successful OpenAM Login, when OpenAM Redirect has been enabled.
 <dd>Cookie Domain default option fixed. The default now appears without the port component
+<dt>
+1.5
+<dd>Fixes compatibility with OpenAM 5.X
 </dl>
