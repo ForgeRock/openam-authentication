@@ -1,9 +1,9 @@
 === OpenAM Authentication ===
-Contributors: forgerock1, forgerock, marius-g, qcastel, bjornjohansen
+Contributors: forgerock1, forgerock, marius-g, qcastel, bjornjohansen, degerstrom, vscheuber
 Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, OpenAM 13.0, Wordpress 3.9 & 4.4.2
 Requires at least: 3.9
-Tested up to: 4.4.2
+Tested up to: 4.7.5
 Stable tag: 1.5
 License: CDDLv1.0
 License URI: https://forgerock.org/cddlv1-0/

@@ -12,7 +12,7 @@ Wordpress plugin to authenticate using OpenAM
 <tr><td>Link:</td><td> http://www.forgerock.org/</td></tr>
 <tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9 & 4.4.2</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
-<tr><td>Tested up to:</td><td>4.4.2</td></tr>
+<tr><td>Tested up to:</td><td>4.7.5</td></tr>
 <tr><td>Stable tag:</td><td>1.5</td></tr>
 <tr><td>License:</td><td> CDDLv1.0</td></tr>
 <tr><td>License URL</td><td>http://forgerock.org/cddlv1-0/</td></tr>
