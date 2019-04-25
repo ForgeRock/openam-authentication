@@ -8,9 +8,9 @@
 Wordpress plugin to authenticate using OpenAM
 <b>OpenAM Authentication</b>
 <table border="0">
-<tr><td>Contributors:</td><td>forgerock1, forgerock, marius-g, qcastel, bjornjohansen, degerstrom, vscheuber</td></tr>
+<tr><td>Contributors:</td><td>forgerock1, forgerock, marius-g, qcastel, bjornjohansen, degerstrom, vscheuber, zoltantarcsay</td></tr>
 <tr><td>Link:</td><td> http://www.forgerock.org/</td></tr>
-<tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9 & 4.4.2</td></tr>
+<tr><td>Tags:</td><td> OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, Wordpress 3.9 & 4.4.2, ForgeRock, Access Management</td></tr>
 <tr><td>Requires at least:</td><td> 3.9</td></tr>
 <tr><td>Tested up to:</td><td>4.7.5</td></tr>
 <tr><td>Stable tag:</td><td>1.5</td></tr>

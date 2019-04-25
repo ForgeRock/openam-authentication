@@ -1,5 +1,5 @@
 === OpenAM Authentication ===
-Contributors: forgerock1, forgerock, marius-g, qcastel, bjornjohansen, degerstrom, vscheuber
+Contributors: forgerock1, forgerock, marius-g, qcastel, bjornjohansen, degerstrom, vscheuber, zoltantarcsay
 Link: http://www.forgerock.org/
 Tags: OpenAM, Authentication, REST, OpenAM 11.0.1, OpenAM 12.0, OpenAM 13.0, Wordpress 3.9 & 4.4.2
 Requires at least: 3.9
