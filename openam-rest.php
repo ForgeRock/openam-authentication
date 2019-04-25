@@ -408,7 +408,7 @@ function getAttributesFromModernOpenAM( $tokenId, $username, $attributes ) {
 	$attributes_url = createAttributesURL();
 	openam_debug( 'getAttributesFromModernOpenAM: ATTRIBUTE URL: ' . $attributes_url );
 	$headers = array(
-		OPENAM_COOKIE_NAME => $tokenId,
+		'Cookie'           => OPENAM_COOKIE_NAME."=".$tokenId,
 		'Content-Type'     => 'application/json',
 	);
 	$url = $attributes_url . $username . '?_fields=' . $attributes;
